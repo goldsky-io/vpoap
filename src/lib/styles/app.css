@@ -1,0 +1,11 @@
+@import url('./tailwind.css');
+
+html {
+  text-rendering: optimizelegibility;
+
+  @apply bg-neutral-300 text-neutral-800 antialiased;
+}
+
+body {
+  @apply min-h-screen min-w-[320px];
+}
