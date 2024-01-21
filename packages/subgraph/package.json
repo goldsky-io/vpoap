@@ -1,0 +1,14 @@
+{
+  "name": "subgraph",
+  "license": "UNLICENSED",
+  "scripts": {
+    "codegen": "graph codegen",
+    "build": "graph build",
+    "deploy": "goldsky subgraph deploy poap-xdai/1.0.0",
+    "delete": "goldsky subgraph delete poap-xdai/1.0.0"
+  },
+  "dependencies": {
+    "@graphprotocol/graph-cli": "^0.67.1",
+    "@graphprotocol/graph-ts": "^0.32.0"
+  }
+}
