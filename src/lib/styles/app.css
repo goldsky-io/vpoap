@@ -3,7 +3,7 @@
 html {
   text-rendering: optimizelegibility;
 
-  @apply bg-neutral-300 text-neutral-800 antialiased;
+  @apply bg-neutral-700 text-neutral-800 antialiased;
 }
 
 body {

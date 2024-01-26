@@ -1,0 +1,43 @@
+name: lint
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: check yarn was not used
+        run: find . -name yarn.lock | wc -l | grep 0
+      - name: check npm was not used
+        run: find . -name package-lock.json | wc -l | grep 0
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 8
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: 'pnpm'
+      - name: Install dependencies
+        run: pnpm install --silent
+      - name: lint prettier
+        run: pnpm lint:prettier
+      - name: lint style
+        run: pnpm lint:style
+      - name: lint ECMAScript
+        run: pnpm lint:es
+      - name: validate typescript
+        run: pnpm validate:ts
+      - name: validate svelte
+        run: pnpm validate:svelte
+      - name: build
+        run: pnpm build
