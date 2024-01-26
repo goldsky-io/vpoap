@@ -8,6 +8,13 @@ declare global {
     // interface PageState {}
     // interface Platform {}
   }
+
+  namespace NodeJS {
+    interface ProcessEnv {
+      // server side only environment variables
+      POAP_API_KEY: string
+    }
+  }
 }
 
 export {}
