@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { queryPOAPEvent } from '$lib/client/poap'
+  import { queryPOAPEvents } from '$lib/client/poap'
   import { ErrorMessage } from '$lib/components/ErrorMessage'
   import { EventTokens } from '$lib/components/EventTokens'
   import { Loading } from '$lib/components/Loading'
@@ -8,18 +8,18 @@
 
   export let data: PageData
 
-  const query = queryPOAPEvent(data.id).poll()
+  const query = queryPOAPEvents(data.ids).poll()
 
-  $: event = $query.data?.event
+  $: events = $query.data?.events
 </script>
 
-<Seo metadata={data.metadata} />
+<Seo metadata={Object.values(data.metadata)} />
 
 <div class="grid h-full">
   {#if $query.error}
     <ErrorMessage error={$query.error} />
-  {:else if event}
-    <EventTokens {event} metadata={data.metadata} />
+  {:else if events}
+    <EventTokens {events} metadata={data.metadata} max={data.max} />
   {:else}
     <div class="place-self-center">
       <Loading />

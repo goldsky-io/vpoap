@@ -3,21 +3,28 @@
   import { collectItems } from '$lib/utils/items'
   import { Token } from '../Token'
 
-  export let event: POAPEventWithTokens
-  export let metadata: POAPEventMetadata
+  export let events: POAPEventWithTokens[]
+  export let metadata: Record<string, POAPEventMetadata>
+  export let max = 25
 
-  const max = 5
   const set = new Set<string>()
 
   let tokens: POAPToken[] = []
 
-  $: tokens = collectItems(set, max, tokens, event.tokens, ({ id }) => id)
+  $: eventMap = Object.fromEntries(events.map((event) => [event.id, event]))
+  $: tokens = collectItems(
+    set,
+    max,
+    tokens,
+    events.flatMap(({ tokens }) => tokens),
+    ({ id }) => id,
+  ).sort((a, b) => Number(b.created) - Number(a.created))
 </script>
 
 <div class="grid grid-cols-1 auto-rows-min gap-2 py-2 w-full">
   {#each tokens as token}
     {#key token.id}
-      <Token {token} {event} {metadata} />
+      <Token {token} event={eventMap[token.event.id]} metadata={metadata[token.event.id]} />
     {/key}
   {/each}
 </div>

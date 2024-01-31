@@ -2,14 +2,22 @@ import { error } from '@sveltejs/kit'
 import { fetchPOAPMetadata } from '$lib/server/poap'
 import type { PageServerLoad } from './$types'
 
-export const load: PageServerLoad = async ({ fetch, params }) => {
-  if (!params.id || !Number.isInteger(Number(params.id))) {
-    console.error('Invalid POAP event ID', params.id)
-    throw error(422, 'Invalid POAP event ID')
+export const load: PageServerLoad = async ({ fetch, params, url }) => {
+  const ids = params.id
+    .split(',')
+    .map((id) => Number(id.trim()))
+    .filter((id) => Number.isInteger(id))
+  if (ids.length === 0) {
+    console.error('Invalid POAP event IDs', params.id)
+    throw error(422, 'Invalid POAP event IDs')
   }
 
-  const id = Number(params.id)
-  const metadata = await fetchPOAPMetadata(id, fetch)
+  const max = Number(url.searchParams.get('max')) || 25
 
-  return { id, metadata }
+  const metadata = await Promise.all(ids.map((id) => fetchPOAPMetadata(id, fetch))).then(
+    (metadata) =>
+      Object.fromEntries(metadata.filter(Boolean).map((metadata) => [metadata.id, metadata])),
+  )
+
+  return { ids, max, metadata }
 }

@@ -1,28 +1,34 @@
 import { getContextClient, gql } from '@urql/svelte'
 import type { POAPEventMetadata, POAPEventWithTokens, POAPTokenWithEvent } from '$lib/types/poap'
+import { Cache } from './cache'
 import { fetchJson } from './json'
 import { withPolling } from './urql'
 
 const apiBasePath = '/api/poap'
+const metadataCache = new Cache<string, POAPEventMetadata>()
 
-export function fetchPOAPMetadata(eventId: string) {
-  return fetchJson<POAPEventMetadata>([apiBasePath, eventId].join('/'), { method: 'POST' })
+export async function fetchPOAPMetadata(eventId: string) {
+  return metadataCache.get(eventId, () =>
+    fetchJson<POAPEventMetadata>([apiBasePath, eventId].join('/'), {
+      method: 'POST',
+    }),
+  )
 }
 
 interface FetchPOAPEventsVariables {
-  id: number
+  ids: number[]
 }
 
 interface FetchPOAPEventsData {
-  event: POAPEventWithTokens
+  events: POAPEventWithTokens[]
 }
 
-export function queryPOAPEvent(id: FetchPOAPEventsVariables['id']) {
+export function queryPOAPEvents(ids: FetchPOAPEventsVariables['ids']) {
   return withPolling<FetchPOAPEventsData, FetchPOAPEventsVariables>({
     client: getContextClient(),
     query: gql`
-      query EventByIdQuery($id: ID!, $first: Int = 5) {
-        event(id: $id) {
+      query EventsByIdQuery($ids: [ID!]!, $first: Int = 5) {
+        events(where: { id_in: $ids }, orderBy: created, orderDirection: desc) {
           id
           created
           tokenMints
@@ -37,12 +43,15 @@ export function queryPOAPEvent(id: FetchPOAPEventsVariables['id']) {
               id
               tokensOwned
             }
+            event {
+              id
+            }
           }
         }
       }
     `,
     variables: {
-      id,
+      ids,
     },
   })
 }

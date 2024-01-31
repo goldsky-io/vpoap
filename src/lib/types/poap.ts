@@ -9,6 +9,9 @@ export interface POAPToken {
   mintOrder: string
   transferCount: string
   owner: POAPAccount
+  event: {
+    id: string
+  }
 }
 
 export interface POAPTokenWithEvent extends POAPToken {
