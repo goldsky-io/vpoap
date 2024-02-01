@@ -1,5 +1,6 @@
 <script lang="ts">
   import { queryPOAPTokens } from '$lib/client/poap'
+  import { AppFrame } from '$lib/components/AppFrame'
   import { ErrorMessage } from '$lib/components/ErrorMessage'
   import { Loading } from '$lib/components/Loading'
   import { Seo } from '$lib/components/Seo'
@@ -18,20 +19,22 @@
 
 <Seo />
 
-<div class="grid h-full">
-  {#if $query.error}
-    <ErrorMessage error={$query.error} />
-  {:else if tokens}
-    <div class="grid grid-cols-1 auto-rows-min gap-2 py-2 w-full">
-      {#each tokens as token}
-        {#key token.id}
-          <Token {token} event={token.event} />
-        {/key}
-      {/each}
-    </div>
-  {:else}
-    <div class="place-self-center">
-      <Loading />
-    </div>
-  {/if}
-</div>
+<AppFrame>
+  <div class="grid h-full">
+    {#if $query.error}
+      <ErrorMessage error={$query.error} />
+    {:else if tokens}
+      <div class="grid grid-cols-1 auto-rows-min gap-2 py-2 w-full">
+        {#each tokens as token}
+          {#key token.id}
+            <Token {token} event={token.event} />
+          {/key}
+        {/each}
+      </div>
+    {:else}
+      <div class="place-self-center">
+        <Loading />
+      </div>
+    {/if}
+  </div>
+</AppFrame>
