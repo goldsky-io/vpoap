@@ -14,7 +14,7 @@ export class Cache<Key, Value> {
     const cached = this.cache.get(key)
 
     if (cached) {
-      if (cached.expiry > Date.now()) return cached.entry
+      if (cached.expiry > Date.now()) return Promise.resolve(cached.entry)
 
       this.cache.delete(key)
     }
