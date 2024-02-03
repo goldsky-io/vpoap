@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { expoIn, expoOut } from 'svelte/easing'
   import { fly, fade } from 'svelte/transition'
   import { fetchENS } from '$lib/client/ens'
   import { fetchPOAPMetadata } from '$lib/client/poap'
@@ -37,13 +38,14 @@
 </script>
 
 <div
-  class="grid grid-cols-2 lg:grid-cols-[var(--grid-size),1fr,var(--grid-size)] grid-rows-[var(--grid-size),1fr] lg:grid-rows-[--grid-size] gap-y-4 w-full h-[calc(var(--grid-size)*2.5)] lg:h-[--grid-size] border border-black/30 rounded-xl shadow-xl overflow-hidden"
+  class="grid grid-cols-2 lg:grid-cols-[var(--grid-size),1fr,var(--grid-size)] grid-rows-[var(--grid-size),1fr] lg:grid-rows-[--grid-size] gap-y-4 w-full h-[calc(var(--grid-size)*2.5)] lg:h-[--grid-size] border border-black/30 rounded-xl shadow-xl overflow-hidden transition-all"
   style:--grid-size="12rem"
-  transition:fly
+  in:fly={{ duration: 200, easing: expoIn, y: '-50%', opacity: 0.1 }}
+  out:fly={{ duration: 300, easing: expoOut, y: '50%', opacity: 0.1 }}
 >
   <div
     class="order-1 grid place-items-center bg-[radial-gradient(circle_at_center,var(--tw-gradient-stops))] from-black to-black/40 text-neutral-200 p-1 sm:p-4"
-    transition:fade={{ delay: 100 }}
+    in:fade={{ delay: 100 }}
   >
     <div class="bg-white/80 rounded-lg p-2 drop-shadow-lg">
       <a
@@ -76,7 +78,7 @@
   </div>
   <div
     class="order-3 lg:order-2 col-span-2 lg:col-span-1 flex flex-col gap-1 p-4 overflow-x-hidden"
-    transition:fade={{ delay: 200 }}
+    in:fade={{ delay: 200 }}
   >
     {#if metadata}
       <Metadata {token} {metadata} />
@@ -102,7 +104,7 @@
   </div>
   <div
     class="order-2 lg:order-3 grid place-items-center bg-[radial-gradient(circle_at_center,var(--tw-gradient-stops))] from-black to-black/40 p-1 sm:p-4 overflow-hidden"
-    transition:fade={{ delay: 300 }}
+    in:fade={{ delay: 300 }}
   >
     {#if metadata}
       <div class="bg-white/80 rounded-full p-1 drop-shadow-lg">
