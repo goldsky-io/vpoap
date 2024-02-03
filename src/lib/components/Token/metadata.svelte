@@ -21,7 +21,7 @@
   {:else}
     <h2 class="text-xl font-semibold truncate">{metadata.name}</h2>
   {/if}
-  <div class="flex flex-wrap justify-end gap-1">
+  <div class="flex flex-wrap justify-end gap-1 min-w-36">
     <a
       class="bg-neutral-700 text-indigo-300 hover:brightness-110 rounded-sm border border-neutral-500/50 p-0.5 text-xs font-mono"
       href="/event/{metadata.id}"
