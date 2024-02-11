@@ -4,7 +4,6 @@
   import { ErrorMessage } from '$lib/components/ErrorMessage'
   import { EventTokens } from '$lib/components/EventTokens'
   import { Loading } from '$lib/components/Loading'
-  import { Seo } from '$lib/components/Seo'
   import type { PageData } from './$types'
 
   export let data: PageData
@@ -13,8 +12,6 @@
 
   $: events = $query.data?.events
 </script>
-
-<Seo metadata={Object.values(data.metadata)} />
 
 <AppFrame metadata={Object.values(data.metadata)}>
   <div class="grid h-full">

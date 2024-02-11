@@ -1,6 +1,7 @@
-import { getContextClient, gql } from '@urql/svelte'
+import { getContextClient, queryStore } from '@urql/svelte'
 import type { POAPEventMetadata, POAPEventWithTokens, POAPTokenWithEvent } from '$lib/types/poap'
 import { Cache } from './cache'
+import { query } from './graphql'
 import { fetchJson } from './json'
 import { withPolling } from './urql'
 
@@ -26,30 +27,7 @@ interface FetchPOAPEventsData {
 export function queryPOAPEvents(ids: FetchPOAPEventsVariables['ids']) {
   return withPolling<FetchPOAPEventsData, FetchPOAPEventsVariables>({
     client: getContextClient(),
-    query: gql`
-      query EventsByIdQuery($ids: [ID!]!, $first: Int = 5) {
-        events(where: { id_in: $ids }, orderBy: created, orderDirection: desc) {
-          id
-          created
-          tokenMints
-          tokenCount
-          transferCount
-          tokens(first: $first, orderBy: created, orderDirection: desc) {
-            id
-            created
-            mintOrder
-            transferCount
-            owner {
-              id
-              tokensOwned
-            }
-            event {
-              id
-            }
-          }
-        }
-      }
-    `,
+    query: query.events,
     variables: {
       ids,
     },
@@ -64,32 +42,30 @@ interface FetchPOAPTokensData {
   tokens: POAPTokenWithEvent[]
 }
 
-export function queryPOAPTokens(first?: number) {
+export function queryPOAPTokens(first: FetchPOAPTokensVariables['first']) {
   return withPolling<FetchPOAPTokensData, FetchPOAPTokensVariables>({
     client: getContextClient(),
-    query: gql`
-      query TokensQuery($first: Int = 5) {
-        tokens(first: $first, orderBy: created, orderDirection: desc) {
-          id
-          created
-          mintOrder
-          transferCount
-          owner {
-            id
-            tokensOwned
-          }
-          event {
-            id
-            created
-            tokenMints
-            tokenCount
-            transferCount
-          }
-        }
-      }
-    `,
+    query: query.tokens,
     variables: {
       first,
+    },
+  })
+}
+
+export interface FetchPOAPTokenVariables {
+  id: number
+}
+
+export interface FetchPOAPTokenData {
+  token: POAPTokenWithEvent
+}
+
+export function queryPOAPToken(id: FetchPOAPTokenVariables['id']) {
+  return queryStore<FetchPOAPTokensData>({
+    client: getContextClient(),
+    query: query.token,
+    variables: {
+      id,
     },
   })
 }

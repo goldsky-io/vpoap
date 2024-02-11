@@ -53,8 +53,3 @@ export interface POAPEventMetadata {
   event_template_id: null
   private_event: boolean
 }
-
-export interface ENSRecords {
-  name?: string
-  avatar?: string
-}

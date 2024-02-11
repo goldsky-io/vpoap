@@ -1,8 +1,9 @@
 <script lang="ts">
-  import type { ENSRecords, POAPAccount } from '$lib/types/poap'
+  import type { ENSRecords } from '$lib/types/ens'
+  import type { POAPAccount } from '$lib/types/poap'
 
   export let account: POAPAccount
-  export let ens: ENSRecords
+  export let ens: ENSRecords = {}
 
   $: address = ens.name || account.id.slice(0, 6) + '…' + account.id.slice(-4)
 </script>

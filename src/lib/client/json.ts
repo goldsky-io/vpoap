@@ -1,5 +1,7 @@
+import type { Fetch } from './types'
+
 export interface FetchOptions extends RequestInit {
-  fetch?: typeof fetch
+  fetch?: Fetch
   debug?: boolean
 }
 

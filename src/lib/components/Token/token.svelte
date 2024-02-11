@@ -1,9 +1,11 @@
 <script lang="ts">
   import { expoIn, expoOut } from 'svelte/easing'
   import { fly, fade } from 'svelte/transition'
+  import { page } from '$app/stores'
   import { fetchENS } from '$lib/client/ens'
   import { fetchPOAPMetadata } from '$lib/client/poap'
-  import type { ENSRecords, POAPEvent, POAPEventMetadata, POAPToken } from '$lib/types/poap'
+  import type { ENSRecords } from '$lib/types/ens'
+  import type { POAPEvent, POAPEventMetadata, POAPToken } from '$lib/types/poap'
   import { Loading } from '../Loading'
   import Account from './account.svelte'
   import Blocky from './blocky.svelte'
@@ -13,12 +15,11 @@
   export let token: POAPToken
   export let event: POAPEvent
   export let metadata: POAPEventMetadata | undefined = undefined
+  export let ens: ENSRecords | undefined = undefined
 
-  let ens: ENSRecords = {}
   let avatarLoaded = false
 
   $: eventId = event.id
-  $: account = token.owner.id
 
   $: if (!metadata) {
     fetchPOAPMetadata(eventId)
@@ -28,8 +29,8 @@
       .catch(console.error)
   }
 
-  $: {
-    fetchENS(account)
+  $: if (!ens) {
+    fetchENS(token.owner.id)
       .then((res) => {
         ens = res
       })
@@ -54,13 +55,14 @@
         rel="noopener noreferrer"
       >
         <div class="grid grid-cols-1 grid-rows-1">
-          {#if ens.avatar}
+          {#if ens && ens.name && ens.avatar}
+            {@const { name, avatar } = ens}
             <img
               class="[grid-area:1/1] object-scale-down h-28 sm:h-36 aspect-square"
-              src={ens.avatar}
-              alt="{ens.name} avatar"
+              src={avatar}
+              alt="{name} avatar"
               on:error={() => {
-                console.log(`Unable to load avatar for ${ens.name}`, ens.avatar)
+                console.log(`Unable to load avatar for ${name}`, avatar)
               }}
               on:load={() => {
                 avatarLoaded = true
@@ -89,14 +91,22 @@
       <div class="col-span-2 sm:col-span-1">
         <Account account={token.owner} {ens} />
       </div>
-      <a
-        class="text-indigo-700 hover:brightness-110 hover:underline sm:text-center font-mono font-medium transition-all"
-        href={`https://app.poap.xyz/token/${token.id}`}
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        #{token.mintOrder}
-      </a>
+      <div>
+        <a
+          class="text-indigo-700 hover:brightness-110 hover:underline sm:text-center font-mono font-medium transition-all"
+          href={`https://app.poap.xyz/token/${token.id}`}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          #{token.mintOrder}
+        </a>
+        {#if $page.route.id !== '/token/[id]'}
+          (<a
+            class="text-indigo-700 hover:brightness-110 hover:underline sm:text-center font-mono font-medium transition-all"
+            href={`/token/${token.id}`}>#{token.id}</a
+          >)
+        {/if}
+      </div>
       <div class="text-right">
         <RelativeDate seconds={token.created} />
       </div>

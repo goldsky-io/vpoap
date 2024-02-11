@@ -1,25 +1,36 @@
 <script lang="ts">
   import type { POAPEventMetadata } from '$lib/types/poap'
+  import { Seo } from '../Seo'
 
-  export let metadata: POAPEventMetadata[] | undefined = undefined
+  export let metadata: POAPEventMetadata | POAPEventMetadata[] | undefined = undefined
+
+  $: metadataArray = hydrate(metadata)
+
+  function hydrate(metadata?: POAPEventMetadata | POAPEventMetadata[]) {
+    if (!metadata) return
+
+    return Array.isArray(metadata) ? metadata : [metadata]
+  }
 </script>
+
+<Seo {metadata} />
 
 <header class="relative bg-neutral-700 border-b border-black/25 text-neutral-200">
   <div class="flex flex-nowrap items-center justify-center gap-1 px-2 py-0.5">
     <span>Watch</span>
-    {#if metadata && metadata.length > 0}
+    {#if metadataArray && metadataArray.length > 0}
       <span class="truncate">
-        {#if metadata.length === 1}
+        {#if metadataArray.length === 1}
           <a
             class="text-indigo-300 hover:brightness-110 font-semibold transition-all"
-            href={`https://poap.xyz/event/${metadata[0].id}`}
+            href={`https://poap.xyz/event/${metadataArray[0].id}`}
             target="_blank"
             rel="noopener noreferrer"
           >
-            {metadata[0].name}
+            {metadataArray[0].name}
           </a>
         {:else}
-          {#each metadata as m, i}
+          {#each metadataArray as m, i}
             <a
               class="text-indigo-300 hover:brightness-110 font-semibold transition-all"
               href={`https://poap.xyz/event/${m.id}`}
@@ -28,10 +39,10 @@
             >
               #{m.id}
             </a>
-            {#if i !== metadata.length - 1}
+            {#if i !== metadataArray.length - 1}
               <span class="-ml-1">, </span>
             {/if}
-            {#if i === metadata.length - 2}
+            {#if i === metadataArray.length - 2}
               <span>and </span>
             {/if}
           {/each}

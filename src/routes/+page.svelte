@@ -3,7 +3,6 @@
   import { AppFrame } from '$lib/components/AppFrame'
   import { ErrorMessage } from '$lib/components/ErrorMessage'
   import { Loading } from '$lib/components/Loading'
-  import { Seo } from '$lib/components/Seo'
   import { Token } from '$lib/components/Token'
   import type { POAPTokenWithEvent } from '$lib/types/poap'
   import { collectItems } from '$lib/utils/items'
@@ -16,8 +15,6 @@
 
   $: tokens = collectItems(set, max, tokens, $query.data?.tokens, ({ id }) => id)
 </script>
-
-<Seo />
 
 <AppFrame>
   <div class="grid h-full">

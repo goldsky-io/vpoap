@@ -21,6 +21,7 @@
   "dependencies": {
     "@download/blockies": "^1.0.3",
     "@ensdomains/ensjs": "^3.2.0",
+    "@urql/core": "^4.2.3",
     "@urql/svelte": "^4.0.4",
     "date-fns": "^3.3.1",
     "dotenv": "^16.3.2",
