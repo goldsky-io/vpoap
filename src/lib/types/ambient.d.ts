@@ -1,9 +1,13 @@
 declare module '@download/blockies' {
-  export function createIcon(opts: {
+  import type { Canvas } from 'canvas'
+  interface Options {
     seed?: string
     color?: string
     bgcolor?: string
     size?: number
     scale?: number
-  }): HTMLCanvasElement
+  }
+
+  export function createIcon(opts: Options): HTMLCanvasElement
+  export function renderIcon(opts: Options, canvas: HTMLCanvasElement | Canvas): HTMLCanvasElement
 }
