@@ -39,7 +39,7 @@
 </script>
 
 <div
-  class="grid grid-cols-2 lg:grid-cols-[var(--grid-size),1fr,var(--grid-size)] grid-rows-[var(--grid-size),1fr] lg:grid-rows-[--grid-size] gap-y-4 w-full h-[calc(var(--grid-size)*2.5)] lg:h-[--grid-size] border border-black/30 rounded-xl shadow-xl overflow-hidden transition-all"
+  class="grid grid-cols-2 lg:grid-cols-[var(--grid-size),1fr,var(--grid-size)] grid-rows-[var(--grid-size),1fr] lg:grid-rows-[--grid-size] gap-y-4 w-full h-[calc(var(--grid-size)*2.5)] lg:h-[--grid-size] bg-neutral-300 border border-black/30 rounded-xl shadow-xl overflow-hidden transition-all"
   style:--grid-size="12rem"
   in:fly={{ duration: 200, easing: expoIn, y: '-50%', opacity: 0.1 }}
   out:fly={{ duration: 300, easing: expoOut, y: '50%', opacity: 0.1 }}
