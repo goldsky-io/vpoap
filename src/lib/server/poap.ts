@@ -99,3 +99,18 @@ export function fetchLatestAccountPOAPToken(address: string, fetch: Fetch) {
     )
     .toPromise()
 }
+
+export function fetchLatestPOAPToken(fetch: Fetch) {
+  return createClient(fetch)
+    .query<{ tokens: { id: string }[] }>(
+      gql`
+        query LatestToken {
+          tokens(first: 1, orderBy: created, orderDirection: desc) {
+            id
+          }
+        }
+      `,
+      {},
+    )
+    .toPromise()
+}

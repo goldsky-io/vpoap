@@ -18,10 +18,13 @@
     const buttons: Frame['buttons'] = frame.buttons || [
       { label: '🔄 Refresh latest', action: 'post' },
     ]
+    // we don't include tokenId in the frame context because we don't want to
+    // refresh the same token over and over
+    const { tokenId, ...state } = context
 
     return getFrameHtmlHead({
       version: 'vNext',
-      postUrl: `${baseUrl}/frame?${new URLSearchParams({ context: JSON.stringify(context) }).toString()}`,
+      postUrl: `${baseUrl}/frame?${new URLSearchParams({ context: JSON.stringify(state) }).toString()}`,
       image: ogImage,
       buttons,
       ...frame,
