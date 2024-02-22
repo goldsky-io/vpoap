@@ -94,7 +94,9 @@
         </h2>
       </div>
       <div style:flex="1 1 0%" style:display="flex" style:overflow="hidden">
-        <p style:margin="0">{metadata.description}</p>
+        <p style:margin="0" style:overflow="hidden" style:white-space="pre-wrap">
+          {metadata.description.replace(/\r?\n/g, ' ')}
+        </p>
       </div>
       <div
         style:display="flex"
