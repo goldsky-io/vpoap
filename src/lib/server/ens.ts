@@ -8,11 +8,14 @@ const client = createPublicClient({
   transport: http(),
 })
 
-export async function fetchENS(address: string): Promise<ENSRecords> {
+export async function fetchENS(
+  address: string,
+  disableDefaultAvatarUrl = false,
+): Promise<ENSRecords> {
   const name = await ensName(address)
   if (!name) return {}
 
-  const avatar = await ensAvatar(name)
+  const avatar = await ensAvatar(name, disableDefaultAvatarUrl)
 
   return { name, avatar }
 
@@ -22,7 +25,7 @@ export async function fetchENS(address: string): Promise<ENSRecords> {
     return getEnsName(client, { address })
   }
 
-  async function ensAvatar(ensName: string) {
+  async function ensAvatar(ensName: string, noDefault = false) {
     const name = normalize(ensName)
     const record = await getEnsText(client, { name, key: 'avatar' })
     // if there is no record then eject early
@@ -32,6 +35,7 @@ export async function fetchENS(address: string): Promise<ENSRecords> {
     // can know when avatar parsing fails with a present avatar record
     const avatar = await getEnsAvatar(client, { name })
     if (avatar) return avatar
+    if (noDefault) return
 
     // hopefully ens metadata can supply the avatar asset
     return `https://metadata.ens.domains/mainnet/avatar/${name}`

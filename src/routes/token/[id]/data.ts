@@ -3,7 +3,11 @@ import type { Fetch } from '$lib/client/types'
 import { fetchENS } from '$lib/server/ens'
 import { fetchPOAPMetadata, fetchPOAPToken } from '$lib/server/poap'
 
-export async function loadTokenData(token_id: string, fetch: Fetch) {
+export async function loadTokenData(
+  token_id: string,
+  fetch: Fetch,
+  disableDefaultAvatarUrl = false,
+) {
   const id = Number(token_id.trim())
   if (!Number.isInteger(id)) {
     console.error('Invalid POAP event ID', id)
@@ -29,7 +33,7 @@ export async function loadTokenData(token_id: string, fetch: Fetch) {
   const { token } = data
   const metadata = await fetchPOAPMetadata(Number(token.event.id), fetch)
 
-  const ens = await fetchENS(token.owner.id)
+  const ens = await fetchENS(token.owner.id, disableDefaultAvatarUrl)
 
   return { id, token, metadata, ens }
 }

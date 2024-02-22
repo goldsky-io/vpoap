@@ -1,24 +1,40 @@
 <script lang="ts">
+  import { getFrameHtmlHead, type Frame } from 'frames.js'
   import type { POAPEventMetadata } from '$lib/types/poap'
   import type { SeoContext } from './types'
 
-  const baseUrl = 'https://vpoap.vercel.app'
+  const baseUrl = import.meta.env.DEV ? 'http://localhost:5173' : 'https://vpoap.vercel.app'
   const title = 'Visual POAP'
   const description = 'Watch POAP mints live!'
 
   export let route: string
   export let metadata: POAPEventMetadata | POAPEventMetadata[] | undefined = undefined
-  export let context: SeoContext | undefined = undefined
+  export let context: SeoContext = {}
+  export let frame: Partial<Frame> = {}
 
-  $: ({ ids, image, seoTitle, seoDescription } = hydrate(metadata))
+  $: ({ ids, ogImage, seoTitle, seoDescription } = hydrate(metadata))
+
+  function frameHtml(frame: Partial<Frame>) {
+    const buttons: Frame['buttons'] = frame.buttons || [
+      { label: '🔄 Refresh latest', action: 'post' },
+    ]
+
+    return getFrameHtmlHead({
+      version: 'vNext',
+      postUrl: `${baseUrl}/frame?${new URLSearchParams({ context: JSON.stringify(context) }).toString()}`,
+      image: ogImage,
+      buttons,
+      ...frame,
+    })
+  }
 
   function hydrate(metadata?: POAPEventMetadata | POAPEventMetadata[]) {
-    const image = imageUrl()
+    const ogImage = imageUrl()
 
     if (!metadata) {
       return {
         ids: '',
-        image,
+        ogImage,
         seoTitle: title,
         seoDescription: description,
       }
@@ -28,18 +44,16 @@
 
     return {
       ids: metdataArray.map((m) => m.id).join(','),
-      image,
+      ogImage,
       seoTitle: truncateText(composeTitle(metdataArray), 60),
       seoDescription: truncateText(composeDescription(metdataArray), 155),
     }
 
     function imageUrl() {
-      if (context) {
-        const at = new Date().getTime()
-        if (context.tokenId) return `${baseUrl}/og/token/${context.tokenId}?at=${at}`
-        if (context.eventIds) return `${baseUrl}/og/event/${context.eventIds.join(',')}?at=${at}`
-        if (context.account) return `${baseUrl}/og/account/${context.account}?at=${at}`
-      }
+      const at = new Date().getTime()
+      if (context.tokenId) return `${baseUrl}/og/token/${context.tokenId}?at=${at}`
+      if (context.eventIds) return `${baseUrl}/og/event/${context.eventIds.join(',')}?at=${at}`
+      if (context.account) return `${baseUrl}/og/account/${context.account}?at=${at}`
 
       return `${baseUrl}/images/twitter-card.png`
     }
@@ -74,8 +88,9 @@
   <meta property="og:url" content={`${baseUrl}${route}${ids}`} />
   <meta property="og:title" content={seoTitle} />
   <meta property="og:description" content={seoDescription} />
-  <meta property="og:image" content={image} />
   <meta name="twitter:title" content={seoTitle} />
   <meta name="twitter:description" content={seoDescription} />
-  <meta name="twitter:image" content={image} />
+  <meta name="twitter:image" content={ogImage} />
+  <!-- eslint-disable-next-line svelte/no-at-html-tags -->
+  {@html frameHtml(frame)}
 </svelte:head>
