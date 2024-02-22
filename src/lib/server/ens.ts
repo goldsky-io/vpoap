@@ -1,6 +1,6 @@
 import { createPublicClient, http, isAddress } from 'viem'
 import { mainnet } from 'viem/chains'
-import { getEnsAvatar, getEnsName, normalize, getEnsText } from 'viem/ens'
+import { getEnsAvatar, getEnsName, normalize, getEnsText, getEnsAddress } from 'viem/ens'
 import type { ENSRecords } from '$lib/types/ens'
 
 const client = createPublicClient({
@@ -36,4 +36,10 @@ export async function fetchENS(address: string): Promise<ENSRecords> {
     // hopefully ens metadata can supply the avatar asset
     return `https://metadata.ens.domains/mainnet/avatar/${name}`
   }
+}
+
+export function fetchReverseENS(address: string) {
+  if (isAddress(address)) return Promise.resolve(address)
+
+  return getEnsAddress(client, { name: normalize(address) })
 }

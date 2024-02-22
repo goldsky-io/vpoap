@@ -1,6 +1,7 @@
 <script lang="ts">
   import { expoIn, expoOut } from 'svelte/easing'
   import { fly, fade } from 'svelte/transition'
+  import { browser } from '$app/environment'
   import { page } from '$app/stores'
   import { fetchENS } from '$lib/client/ens'
   import { fetchPOAPMetadata } from '$lib/client/poap'
@@ -21,7 +22,7 @@
 
   $: eventId = event.id
 
-  $: if (!metadata) {
+  $: if (!metadata && browser) {
     fetchPOAPMetadata(eventId)
       .then((data) => {
         metadata = data
@@ -29,7 +30,7 @@
       .catch(console.error)
   }
 
-  $: if (!ens) {
+  $: if (!ens && browser) {
     fetchENS(token.owner.id)
       .then((res) => {
         ens = res

@@ -6,10 +6,30 @@ import {
 } from '@urql/svelte'
 import { derived, readable, writable } from 'svelte/store'
 
+export function withInitialData<Data = unknown, Variables extends AnyVariables = AnyVariables>(
+  queryArgs: QueryArgs<Data, Variables>,
+  initialData?: Data,
+) {
+  if (!initialData) return queryStore(queryArgs)
+
+  const fetched = writable(false)
+  return derived([fetched, queryStore(queryArgs)], ([hasFetched, query]) => {
+    if (query.data) {
+      fetched.set(true)
+    }
+
+    return {
+      ...query,
+      data: hasFetched ? query.data : query.data || initialData,
+    }
+  })
+}
+
 export function withPolling<Data = unknown, Variables extends AnyVariables = AnyVariables>(
   queryArgs: QueryArgs<Data, Variables>,
+  initialData?: Data,
 ) {
-  const initial = queryStore(queryArgs)
+  const initial = withInitialData(queryArgs, initialData)
   const result = writable<OperationResultState<Data, Variables>>()
   const query = derived([initial, result], ([initial, next]) => {
     return next || initial

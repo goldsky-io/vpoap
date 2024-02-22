@@ -1,8 +1,10 @@
 <script lang="ts">
   import type { POAPEventMetadata } from '$lib/types/poap'
-  import { Seo } from '../Seo'
+  import { Seo, type SeoContext } from '../Seo'
 
+  export let route = '/'
   export let metadata: POAPEventMetadata | POAPEventMetadata[] | undefined = undefined
+  export let context: SeoContext | undefined = undefined
 
   $: metadataArray = hydrate(metadata)
 
@@ -13,7 +15,7 @@
   }
 </script>
 
-<Seo {metadata} />
+<Seo {route} {metadata} {context} />
 
 <header class="relative bg-neutral-700 border-b border-black/25 text-neutral-200">
   <div class="flex flex-nowrap items-center justify-center gap-1 px-2 py-0.5">

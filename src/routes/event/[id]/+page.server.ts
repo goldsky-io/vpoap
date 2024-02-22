@@ -1,5 +1,6 @@
 import { error } from '@sveltejs/kit'
-import { fetchPOAPMetadata } from '$lib/server/poap'
+import { MaxItems } from '$lib/client/constants'
+import { fetchPOAPEvents, fetchPOAPMetadata } from '$lib/server/poap'
 import type { PageServerLoad } from './$types'
 
 export const load: PageServerLoad = async ({ fetch, params, url }) => {
@@ -12,12 +13,14 @@ export const load: PageServerLoad = async ({ fetch, params, url }) => {
     throw error(422, 'Invalid POAP event IDs')
   }
 
-  const max = Number(url.searchParams.get('max')) || 25
+  const max = Number(url.searchParams.get('max')) || MaxItems
 
-  const metadata = await Promise.all(ids.map((id) => fetchPOAPMetadata(id, fetch))).then(
-    (metadata) =>
+  const [metadata, query] = await Promise.all([
+    Promise.all(ids.map((id) => fetchPOAPMetadata(id, fetch))).then((metadata) =>
       Object.fromEntries(metadata.filter(Boolean).map((metadata) => [metadata.id, metadata])),
-  )
+    ),
+    fetchPOAPEvents(ids, max, fetch),
+  ])
 
-  return { ids, max, metadata }
+  return { ids, max, metadata, initialData: query.data }
 }

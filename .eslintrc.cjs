@@ -21,6 +21,10 @@ module.exports = {
     es2017: true,
     node: true,
   },
+  globals: {
+    $$Generic: 'readable',
+    $$Slots: 'readable',
+  },
   overrides: [
     {
       files: ['*.svelte'],
@@ -38,8 +42,11 @@ module.exports = {
     },
   ],
   rules: {
+    // this rule is interfering with $$Generic, so we'll disable it for now
+    // see: https://github.com/sveltejs/eslint-plugin-svelte/issues/541
+    '@typescript-eslint/no-redundant-type-constituents': 'off',
     '@typescript-eslint/no-unused-vars': [
-      'warn',
+      'error',
       {
         // allow unused function parameters that start with an underscore
         argsIgnorePattern: '^_',
@@ -47,6 +54,7 @@ module.exports = {
         destructuredArrayIgnorePattern: '^_',
         // allow destructuring of unused fields in order to shrink an object shape
         ignoreRestSiblings: true,
+        varsIgnorePattern: '^\\$\\$(Props|Events|Slots)$',
       },
     ],
   },

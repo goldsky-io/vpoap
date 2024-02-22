@@ -12,9 +12,7 @@
   <a
     class="text-indigo-700 hover:brightness-110 hover:underline transition-all"
     class:font-mono={!ens.name}
-    href="https://www.ondora.xyz/network/ethereum/accounts/{account.id}"
-    target="_blank"
-    rel="noopener noreferrer"
+    href="/account/{ens.name || account.id}"
   >
     {address}
   </a>
