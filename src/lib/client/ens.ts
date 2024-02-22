@@ -1,4 +1,4 @@
-import type { ENSRecords } from '$lib/types/poap'
+import type { ENSRecords } from '$lib/types/ens'
 import { Cache } from './cache'
 import { fetchJson } from './json'
 

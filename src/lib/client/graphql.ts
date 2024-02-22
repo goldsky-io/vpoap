@@ -1,4 +1,4 @@
-import { Client, cacheExchange, fetchExchange, gql, setContextClient } from '@urql/svelte'
+import { Client, cacheExchange, fetchExchange, gql } from '@urql/core'
 import type { Fetch } from './types'
 
 export function createClient(fetch?: Fetch) {
@@ -7,10 +7,6 @@ export function createClient(fetch?: Fetch) {
     exchanges: [cacheExchange, fetchExchange],
     fetch,
   })
-}
-
-export function initializeGraphQL() {
-  setContextClient(createClient())
 }
 
 const fragments = {
@@ -73,6 +69,22 @@ export const query = {
         ...TokenFragment
         event {
           ...EventFragment
+        }
+      }
+    }
+
+    ${fragments.event}
+    ${fragments.token}
+  `,
+  account: gql`
+    query AccountQuery($address: String!, $first: Int = 5) {
+      account(id: $address) {
+        id
+        tokens(first: $first, orderBy: created, orderDirection: desc) {
+          ...TokenFragment
+          event {
+            ...EventFragment
+          }
         }
       }
     }

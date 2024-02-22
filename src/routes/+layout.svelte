@@ -1,8 +1,9 @@
 <script lang="ts">
-  import { initializeGraphQL } from '$lib/client/graphql'
+  import { setContextClient } from '@urql/svelte'
+  import { createClient } from '$lib/client/graphql'
   import '$lib/styles/app.css'
 
-  initializeGraphQL()
+  setContextClient(createClient())
 </script>
 
 <div class="flex flex-col min-h-[100dvh] max-h-[100dvh]">

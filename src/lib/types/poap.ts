@@ -30,6 +30,11 @@ export interface POAPEventWithTokens extends POAPEvent {
   tokens: POAPToken[]
 }
 
+export interface POAPAccountWithTokens {
+  id: string
+  tokens: POAPTokenWithEvent[]
+}
+
 export interface POAPEventMetadata {
   id: number
   fancy_id: string

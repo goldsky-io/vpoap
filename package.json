@@ -5,7 +5,7 @@
   "scripts": {
     "clean": "rimraf ./.svelte-kit",
     "dev": "vite dev",
-    "build": "vite build",
+    "build": "pnpm sync && vite build",
     "preview": "vite preview",
     "sync": "svelte-kit sync",
     "validate:svelte": "pnpm sync && svelte-check --tsconfig ./tsconfig.json",
@@ -21,10 +21,15 @@
   "dependencies": {
     "@download/blockies": "^1.0.3",
     "@ensdomains/ensjs": "^3.2.0",
+    "@fontsource/inter": "^5.0.16",
+    "@fontsource/roboto-mono": "^5.0.16",
+    "@napi-rs/canvas": "^0.1.45",
+    "@resvg/resvg-js": "^2.6.0",
     "@urql/core": "^4.2.3",
     "@urql/svelte": "^4.0.4",
     "date-fns": "^3.3.1",
     "dotenv": "^16.3.2",
+    "satori": "^0.10.11",
     "svelte": "^4.2.7",
     "tailwindcss": "^3.4.1",
     "viem": "^2.5.0"
@@ -55,7 +60,8 @@
     "svelte-check": "^3.6.0",
     "tslib": "^2.4.1",
     "typescript": "^5.0.0",
-    "vite": "^5.0.3"
+    "vite": "^5.0.3",
+    "vite-plugin-arraybuffer": "^0.0.2"
   },
   "type": "module"
 }

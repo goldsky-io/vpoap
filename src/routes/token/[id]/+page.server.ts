@@ -1,35 +1,6 @@
-import { error } from '@sveltejs/kit'
-import { fetchPOAPMetadata, fetchPOAPToken } from '$lib/server/poap'
 import type { PageServerLoad } from './$types'
-import { fetchENS } from '$lib/server/ens'
+import { loadTokenData } from './data'
 
-export const load: PageServerLoad = async ({ fetch, params }) => {
-  const id = Number(params.id.trim())
-  if (!Number.isInteger(id)) {
-    console.error('Invalid POAP event ID', id)
-    throw error(422, 'Invalid POAP event ID')
-  }
-
-  const { data, error: tokenError } = await fetchPOAPToken(id, fetch)
-  if (tokenError) {
-    console.error('Failed to fetch POAP token', id, tokenError)
-    throw error(422, 'Failed to fetch POAP token')
-  }
-
-  if (!data) {
-    console.error('Failed to fetch POAP token data', id)
-    throw error(422, 'Failed to fetch POAP token data')
-  }
-
-  if (!data.token) {
-    console.error('POAP token not found', id)
-    return { id }
-  }
-
-  const { token } = data
-  const metadata = await fetchPOAPMetadata(Number(token.event.id), fetch)
-
-  const ens = await fetchENS(token.owner.id)
-
-  return { id, token, metadata, ens }
+export const load: PageServerLoad = ({ fetch, params }) => {
+  return loadTokenData(params.id, fetch)
 }

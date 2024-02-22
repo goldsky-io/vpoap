@@ -1,5 +1,6 @@
-import { error, json, type RequestHandler } from '@sveltejs/kit'
+import { error, json } from '@sveltejs/kit'
 import { fetchPOAPMetadata } from '$lib/server/poap'
+import type { RequestHandler } from './$types'
 
 export const POST: RequestHandler = async ({ params, fetch }) => {
   try {

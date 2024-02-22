@@ -1,9 +1,14 @@
-import { getContextClient, queryStore } from '@urql/svelte'
-import type { POAPEventMetadata, POAPEventWithTokens, POAPTokenWithEvent } from '$lib/types/poap'
+import { getContextClient } from '@urql/svelte'
+import type {
+  POAPAccountWithTokens,
+  POAPEventMetadata,
+  POAPEventWithTokens,
+  POAPTokenWithEvent,
+} from '$lib/types/poap'
 import { Cache } from './cache'
 import { query } from './graphql'
 import { fetchJson } from './json'
-import { withPolling } from './urql'
+import { withInitialData, withPolling } from './urql'
 
 const apiBasePath = '/api/poap'
 const metadataCache = new Cache<string, POAPEventMetadata>()
@@ -16,40 +21,55 @@ export async function fetchPOAPMetadata(eventId: string) {
   )
 }
 
-interface FetchPOAPEventsVariables {
+export interface FetchPOAPEventsVariables {
   ids: number[]
-}
-
-interface FetchPOAPEventsData {
-  events: POAPEventWithTokens[]
-}
-
-export function queryPOAPEvents(ids: FetchPOAPEventsVariables['ids']) {
-  return withPolling<FetchPOAPEventsData, FetchPOAPEventsVariables>({
-    client: getContextClient(),
-    query: query.events,
-    variables: {
-      ids,
-    },
-  })
-}
-
-interface FetchPOAPTokensVariables {
   first?: number
 }
 
-interface FetchPOAPTokensData {
+export interface FetchPOAPEventsData {
+  events: POAPEventWithTokens[]
+}
+
+export function queryPOAPEvents(
+  ids: FetchPOAPEventsVariables['ids'],
+  first: FetchPOAPEventsVariables['first'],
+  initialData?: FetchPOAPEventsData,
+) {
+  return withPolling<FetchPOAPEventsData, FetchPOAPEventsVariables>(
+    {
+      client: getContextClient(),
+      query: query.events,
+      variables: {
+        ids,
+        first,
+      },
+    },
+    initialData,
+  )
+}
+
+export interface FetchPOAPTokensVariables {
+  first?: number
+}
+
+export interface FetchPOAPTokensData {
   tokens: POAPTokenWithEvent[]
 }
 
-export function queryPOAPTokens(first: FetchPOAPTokensVariables['first']) {
-  return withPolling<FetchPOAPTokensData, FetchPOAPTokensVariables>({
-    client: getContextClient(),
-    query: query.tokens,
-    variables: {
-      first,
+export function queryPOAPTokens(
+  first: FetchPOAPTokensVariables['first'],
+  initialData?: FetchPOAPTokensData,
+) {
+  return withPolling<FetchPOAPTokensData, FetchPOAPTokensVariables>(
+    {
+      client: getContextClient(),
+      query: query.tokens,
+      variables: {
+        first,
+      },
     },
-  })
+    initialData,
+  )
 }
 
 export interface FetchPOAPTokenVariables {
@@ -57,15 +77,48 @@ export interface FetchPOAPTokenVariables {
 }
 
 export interface FetchPOAPTokenData {
-  token: POAPTokenWithEvent
+  token?: POAPTokenWithEvent | null
 }
 
-export function queryPOAPToken(id: FetchPOAPTokenVariables['id']) {
-  return queryStore<FetchPOAPTokensData>({
-    client: getContextClient(),
-    query: query.token,
-    variables: {
-      id,
+export function queryPOAPToken(
+  id: FetchPOAPTokenVariables['id'],
+  initialData?: FetchPOAPTokensData,
+) {
+  return withInitialData<FetchPOAPTokensData>(
+    {
+      client: getContextClient(),
+      query: query.token,
+      variables: {
+        id,
+      },
     },
-  })
+    initialData,
+  )
+}
+
+export interface FetchPOAPAccountVariables {
+  address: string
+  first?: number
+}
+
+export interface FetchPOAPAccountData {
+  account?: POAPAccountWithTokens | null
+}
+
+export function queryPOAPAccount(
+  address: FetchPOAPAccountVariables['address'],
+  first: FetchPOAPAccountVariables['first'],
+  initialData?: FetchPOAPAccountData,
+) {
+  return withPolling<FetchPOAPAccountData>(
+    {
+      client: getContextClient(),
+      query: query.account,
+      variables: {
+        address: address.toLowerCase(),
+        first,
+      },
+    },
+    initialData,
+  )
 }

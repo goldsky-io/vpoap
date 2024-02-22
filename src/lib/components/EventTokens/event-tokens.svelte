@@ -1,11 +1,12 @@
 <script lang="ts">
+  import { MaxItems } from '$lib/client/constants'
   import type { POAPEventMetadata, POAPEventWithTokens, POAPToken } from '$lib/types/poap'
   import { collectItems } from '$lib/utils/items'
   import { Token } from '../Token'
 
   export let events: POAPEventWithTokens[]
   export let metadata: Record<string, POAPEventMetadata>
-  export let max = 25
+  export let max = MaxItems
 
   const set = new Set<string>()
 
@@ -22,9 +23,7 @@
 </script>
 
 <div class="grid grid-cols-1 auto-rows-min gap-2 py-2 w-full">
-  {#each tokens as token}
-    {#key token.id}
-      <Token {token} event={eventMap[token.event.id]} metadata={metadata[token.event.id]} />
-    {/key}
+  {#each tokens as token (token.id)}
+    <Token {token} event={eventMap[token.event.id]} metadata={metadata[token.event.id]} />
   {/each}
 </div>
