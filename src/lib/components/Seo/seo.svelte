@@ -14,21 +14,35 @@
 
   $: ({ ids, ogImage, seoTitle, seoDescription } = hydrate(metadata))
 
-  function frameHtml(frame: Partial<Frame>) {
+  function frameHtml(frame: Partial<Frame>, ogImage: string, route: string) {
+    const action = routeAction()
     const buttons: Frame['buttons'] = frame.buttons || [
-      { label: '🔄 Refresh latest', action: 'post' },
+      { label: `🔄 Refresh ${action}`, action: 'post' },
     ]
     // we don't include tokenId in the frame context because we don't want to
     // refresh the same token over and over
     const { tokenId, ...state } = context
 
+    // token pages are mostly static, so we can use the dynamic image
+    // everything else uses our placeholder static image and will rely on the refresh button
+    const image = route === '/token' ? ogImage : `${baseUrl}/images/twitter-card.png`
+
     return getFrameHtmlHead({
       version: 'vNext',
-      postUrl: `${baseUrl}/frame?${new URLSearchParams({ context: JSON.stringify(state) }).toString()}`,
-      image: ogImage,
+      postUrl: `${baseUrl}/frame?${new URLSearchParams({ action, context: JSON.stringify(state) }).toString()}`,
+      image,
+      ogImage,
       buttons,
       ...frame,
     })
+
+    function routeAction() {
+      if (route === '/') return 'latest POAP'
+      if (route === '/token') return 'POAP'
+      if (route === '/account') return 'account POAPs'
+      if (route === '/event') return 'event POAPs'
+      return 'latest'
+    }
   }
 
   function hydrate(metadata?: POAPEventMetadata | POAPEventMetadata[]) {
@@ -95,5 +109,5 @@
   <meta name="twitter:description" content={seoDescription} />
   <meta name="twitter:image" content={ogImage} />
   <!-- eslint-disable-next-line svelte/no-at-html-tags -->
-  {@html frameHtml(frame)}
+  {@html frameHtml(frame, ogImage, route)}
 </svelte:head>

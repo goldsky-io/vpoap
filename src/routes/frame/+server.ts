@@ -7,6 +7,7 @@ import type { RequestHandler } from './$types'
 export const POST: RequestHandler = async ({ request, url, fetch }) => {
   const baseUrl = import.meta.env.DEV ? 'http://localhost:5173' : 'https://vpoap.vercel.app'
   const context = JSON.parse(url.searchParams.get('context') || '{}') as SeoContext
+  const action = url.searchParams.get('action') || 'latest'
   const body = (await request.json()) as FrameActionPayload
 
   const { isValid, message } = await validateFrameMessage(body)
@@ -19,7 +20,7 @@ export const POST: RequestHandler = async ({ request, url, fetch }) => {
     version: 'vNext',
     buttons: [
       {
-        label: '🔄 Refresh latest',
+        label: `🔄 Refresh ${action}`,
         action: 'post',
       },
     ],
