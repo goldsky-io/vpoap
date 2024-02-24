@@ -22,6 +22,10 @@
    * @type {string}
    */
   export let background
+  /**
+   * @type {boolean}
+   */
+  export let isStatic = false
 </script>
 
 <div
@@ -90,40 +94,50 @@
           style:text-overflow="ellipsis"
           style:white-space="nowrap"
         >
-          {metadata.name}
+          {#if isStatic}
+            Visual POAP Feed
+          {:else}
+            {metadata.name}
+          {/if}
         </h2>
       </div>
       <div style:flex="1 1 0%" style:display="flex" style:overflow="hidden">
         <p style:margin="0" style:overflow="hidden" style:white-space="pre-wrap">
-          {metadata.description.replace(/\r?\n/g, ' ')}
+          {#if isStatic}
+            Hit the refresh button to watch live POAPS!
+          {:else}
+            {metadata.description.replace(/\r?\n/g, ' ')}
+          {/if}
         </p>
       </div>
-      <div
-        style:display="flex"
-        style:align-items="center"
-        style:justify-content="space-between"
-        style:color="rgb(67, 56, 202)"
-        style:font-family="monospace"
-      >
-        <p style:margin="4px 0">
-          Token
-          <span style:margin-left="4px" style:font-family="monospace">
-            #{token.id}
-          </span>
-        </p>
-        <p style:margin="0">
-          Mint
-          <span style:margin-left="4px" style:font-family="monospace">
-            #{token.mintOrder}
-          </span>
-        </p>
-        <p style:margin="0">
-          Event
-          <span style:margin-left="4px" style:font-family="monospace">
-            #{token.event.id}
-          </span>
-        </p>
-      </div>
+      {#if !isStatic}
+        <div
+          style:display="flex"
+          style:align-items="center"
+          style:justify-content="space-between"
+          style:color="rgb(67, 56, 202)"
+          style:font-family="monospace"
+        >
+          <p style:margin="4px 0">
+            Token
+            <span style:margin-left="4px" style:font-family="monospace">
+              #{token.id}
+            </span>
+          </p>
+          <p style:margin="0">
+            Mint
+            <span style:margin-left="4px" style:font-family="monospace">
+              #{token.mintOrder}
+            </span>
+          </p>
+          <p style:margin="0">
+            Event
+            <span style:margin-left="4px" style:font-family="monospace">
+              #{token.event.id}
+            </span>
+          </p>
+        </div>
+      {/if}
       <div style:display="flex" style:align-items="center" style:justify-content="space-between">
         <div
           style:display="flex"
@@ -135,6 +149,7 @@
           <p style:margin="0" style:color="rgb(67, 56, 202)" style:font-size="14px">
             {token.owner.id}
           </p>
+
           <span
             style:margin="0"
             style:background-color="rgb(64, 64, 64)"
@@ -146,15 +161,21 @@
             style:font-size="12px"
             style:line-height="16px"
           >
-            {token.owner.tokensOwned}
+            {#if isStatic}
+              ∞
+            {:else}
+              {token.owner.tokensOwned}
+            {/if}
           </span>
         </div>
-        <p style:margin="0" style:text-align="right" style:font-size="14px">
-          {formatDistanceToNow(Number(token.created) * 1000, {
-            includeSeconds: true,
-            addSuffix: true,
-          })}
-        </p>
+        {#if !isStatic}
+          <p style:margin="0" style:text-align="right" style:font-size="14px">
+            {formatDistanceToNow(Number(token.created) * 1000, {
+              includeSeconds: true,
+              addSuffix: true,
+            })}
+          </p>
+        {/if}
       </div>
     </div>
     <div
@@ -174,7 +195,7 @@
           style:height="214px"
           style:border-radius="9999px"
           style:object-fit="scale-down"
-          src={metadata.image_url}
+          src={isStatic ? 'https://poap.xyz/apple-touch-icon.png' : metadata.image_url}
           alt="{metadata.name} POAP image"
         />
       </div>

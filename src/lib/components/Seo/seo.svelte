@@ -25,7 +25,7 @@
 
     // token pages are mostly static, so we can use the dynamic image
     // everything else uses our placeholder static image and will rely on the refresh button
-    const image = route === '/token' ? ogImage : `${baseUrl}/images/twitter-card.png`
+    const image = imageUrl(true)
 
     return getFrameHtmlHead({
       version: 'vNext',
@@ -66,15 +66,6 @@
       seoDescription: truncateText(composeDescription(metdataArray), 155),
     }
 
-    function imageUrl() {
-      const at = new Date().getTime()
-      if (context.tokenId) return `${baseUrl}/og/token/${context.tokenId}?at=${at}`
-      if (context.eventIds) return `${baseUrl}/og/event/${context.eventIds.join(',')}?at=${at}`
-      if (context.account) return `${baseUrl}/og/account/${context.account}?at=${at}`
-
-      return `${baseUrl}/images/twitter-card.png`
-    }
-
     function composeTitle(metadata: POAPEventMetadata[] | undefined) {
       if (!metadata || metadata.length === 0) return title
       if (metadata.length === 1) {
@@ -96,6 +87,23 @@
     function truncateText(text: string, length: number) {
       return text.length > length ? `${text.slice(0, length - 1)}…` : text
     }
+  }
+
+  function imageUrl(_static = false) {
+    const at = new Date().getTime()
+    const params = new URLSearchParams({
+      at: at.toString(),
+    })
+    if (_static) {
+      params.set('static', 'true')
+    }
+    const search = params.toString()
+
+    if (context.tokenId) return `${baseUrl}/og/token/${context.tokenId}?${search}`
+    if (context.eventIds) return `${baseUrl}/og/event/${context.eventIds.join(',')}?${search}`
+    if (context.account) return `${baseUrl}/og/account/${context.account}?${search}`
+
+    return `${baseUrl}/images/twitter-card.png`
   }
 </script>
 

@@ -3,7 +3,7 @@ import { fetchLatestEventPOAPTokens } from '$lib/server/poap'
 import { tokenResponse } from '../../token/[id]/tokenResponse'
 import type { RequestHandler } from './$types'
 
-export const GET: RequestHandler = async ({ params, fetch }) => {
+export const GET: RequestHandler = async ({ params, url, fetch }) => {
   const ids = params.id
     .split(',')
     .map((id) => Number(id.trim()))
@@ -19,5 +19,6 @@ export const GET: RequestHandler = async ({ params, fetch }) => {
     .sort((a, b) => Number(b.created) - Number(a.created))[0]?.id
   if (!tokenId) throw error(404, 'POAP token not found for events')
 
-  return tokenResponse(tokenId, fetch)
+  const _static = url.searchParams.get('static') === 'true'
+  return tokenResponse(tokenId, fetch, _static)
 }
