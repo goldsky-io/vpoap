@@ -10,10 +10,15 @@ import backgroundImage from './og-background.png?arraybuffer'
 import OgToken from './og-token.svelte'
 import { svelteToPngResponse } from './svelte-to-png'
 
-export async function tokenResponse(id: string, fetch: Fetch, disableDefaultAvatarUrl = false) {
+export async function tokenResponse(id: string, fetch: Fetch, _static = false) {
   try {
-    const props = await loadTokenData(id, fetch, disableDefaultAvatarUrl)
+    const props = await loadTokenData(id, fetch, true)
     if (!props.token) throw error(404, 'Token not found')
+
+    if (_static) {
+      props.ens.avatar = undefined
+      props.token.owner.id = '0x0000000000000000000000000000000000000000'
+    }
 
     const avatar =
       props.ens.avatar ||
@@ -30,7 +35,7 @@ export async function tokenResponse(id: string, fetch: Fetch, disableDefaultAvat
 
     return await svelteToPngResponse(
       OgToken,
-      { ...props, avatar, background },
+      { ...props, avatar, background, isStatic: _static },
       {
         width: 1200,
         height: 630,

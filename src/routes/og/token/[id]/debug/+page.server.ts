@@ -5,14 +5,19 @@ import { loadTokenData } from '../../../../token/[id]/data'
 import backgroundImage from '../og-background.png?arraybuffer'
 import type { PageServerLoad } from './$types'
 
-export const load: PageServerLoad = async ({ fetch, params }) => {
+export const load: PageServerLoad = async ({ fetch, url, params }) => {
   const data = await loadTokenData(params.id, fetch)
-
   if (!data.token) {
     throw error(404, 'Token not found')
   }
 
+  const _static = url.searchParams.has('static')
   const { token, metadata, ens } = data
+
+  if (_static) {
+    ens.avatar = undefined
+    token.owner.id = '0x0000000000000000000000000000000000000000'
+  }
 
   const avatar =
     ens.avatar ||
@@ -33,5 +38,6 @@ export const load: PageServerLoad = async ({ fetch, params }) => {
     ens,
     avatar,
     background,
+    isStatic: _static,
   }
 }

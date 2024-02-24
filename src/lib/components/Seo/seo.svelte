@@ -14,21 +14,35 @@
 
   $: ({ ids, ogImage, seoTitle, seoDescription } = hydrate(metadata))
 
-  function frameHtml(frame: Partial<Frame>) {
+  function frameHtml(frame: Partial<Frame>, ogImage: string, route: string) {
+    const action = routeAction()
     const buttons: Frame['buttons'] = frame.buttons || [
-      { label: '🔄 Refresh latest', action: 'post' },
+      { label: `🔄 Refresh ${action}`, action: 'post' },
     ]
     // we don't include tokenId in the frame context because we don't want to
     // refresh the same token over and over
     const { tokenId, ...state } = context
 
+    // token pages are mostly static, so we can use the dynamic image
+    // everything else uses our placeholder static image and will rely on the refresh button
+    const image = imageUrl(true)
+
     return getFrameHtmlHead({
       version: 'vNext',
-      postUrl: `${baseUrl}/frame?${new URLSearchParams({ context: JSON.stringify(state) }).toString()}`,
-      image: ogImage,
+      postUrl: `${baseUrl}/frame?${new URLSearchParams({ action, context: JSON.stringify(state) }).toString()}`,
+      image,
+      ogImage,
       buttons,
       ...frame,
     })
+
+    function routeAction() {
+      if (route === '/') return 'latest POAP'
+      if (route === '/token') return 'POAP'
+      if (route === '/account') return 'account POAPs'
+      if (route === '/event') return 'event POAPs'
+      return 'latest'
+    }
   }
 
   function hydrate(metadata?: POAPEventMetadata | POAPEventMetadata[]) {
@@ -50,15 +64,6 @@
       ogImage,
       seoTitle: truncateText(composeTitle(metdataArray), 60),
       seoDescription: truncateText(composeDescription(metdataArray), 155),
-    }
-
-    function imageUrl() {
-      const at = new Date().getTime()
-      if (context.tokenId) return `${baseUrl}/og/token/${context.tokenId}?at=${at}`
-      if (context.eventIds) return `${baseUrl}/og/event/${context.eventIds.join(',')}?at=${at}`
-      if (context.account) return `${baseUrl}/og/account/${context.account}?at=${at}`
-
-      return `${baseUrl}/images/twitter-card.png`
     }
 
     function composeTitle(metadata: POAPEventMetadata[] | undefined) {
@@ -83,6 +88,23 @@
       return text.length > length ? `${text.slice(0, length - 1)}…` : text
     }
   }
+
+  function imageUrl(_static = false) {
+    const at = new Date().getTime()
+    const params = new URLSearchParams({
+      at: at.toString(),
+    })
+    if (_static) {
+      params.set('static', 'true')
+    }
+    const search = params.toString()
+
+    if (context.tokenId) return `${baseUrl}/og/token/${context.tokenId}?${search}`
+    if (context.eventIds) return `${baseUrl}/og/event/${context.eventIds.join(',')}?${search}`
+    if (context.account) return `${baseUrl}/og/account/${context.account}?${search}`
+
+    return `${baseUrl}/images/twitter-card.png`
+  }
 </script>
 
 <svelte:head>
@@ -95,5 +117,5 @@
   <meta name="twitter:description" content={seoDescription} />
   <meta name="twitter:image" content={ogImage} />
   <!-- eslint-disable-next-line svelte/no-at-html-tags -->
-  {@html frameHtml(frame)}
+  {@html frameHtml(frame, ogImage, route)}
 </svelte:head>
