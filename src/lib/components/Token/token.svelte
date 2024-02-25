@@ -80,14 +80,14 @@
     </div>
   </div>
   <div
-    class="order-3 lg:order-2 col-span-2 lg:col-span-1 flex flex-col gap-1 p-4 overflow-x-hidden"
+    class="order-3 lg:order-2 col-span-2 lg:col-span-1 flex flex-col gap-1 p-4 pt-0 lg:pt-4 overflow-x-hidden"
     in:fade={{ delay: 200 }}
   >
     {#if metadata}
       <Metadata {token} {metadata} />
     {/if}
     <div
-      class="grid grid-rows-2 sm:grid-rows-1 grid-cols-2 sm:grid-cols-[auto,auto,auto] lg:grid-cols-[1fr,auto,1fr] items-center"
+      class="grid grid-rows-2 sm:grid-rows-1 grid-cols-2 sm:grid-cols-[1fr,auto,1fr] items-center"
     >
       <div class="col-span-2 sm:col-span-1">
         <Account account={token.owner} {ens} />

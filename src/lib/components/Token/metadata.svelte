@@ -8,7 +8,7 @@
   $: location = [metadata.city, metadata.country].filter(Boolean).join(', ')
 </script>
 
-<div class="flex flex-col sm:flex-row sm:items-center justify-between">
+<div class="flex flex-col sm:flex-row items-center justify-between">
   {#if metadata.event_url}
     <a
       class="text-indigo-700 hover:brightness-110 hover:underline transition-all truncate"
@@ -21,7 +21,7 @@
   {:else}
     <h2 class="text-xl font-semibold truncate">{metadata.name}</h2>
   {/if}
-  <div class="flex flex-wrap justify-end gap-1 min-w-36">
+  <div class="flex flex-wrap justify-center lg:justify-end gap-1 min-w-36">
     <a
       class="bg-neutral-700 text-indigo-300 hover:brightness-110 rounded-sm border border-neutral-500/50 p-0.5 text-xs font-mono"
       href="/event/{metadata.id}"
@@ -55,6 +55,6 @@
     {/if}
   </div>
 </div>
-<div class="flex-1 max-h-32 overflow-y-auto overflow-x-clip">
+<div class="flex-1 lg:max-h-32 overflow-y-auto overflow-x-clip">
   <p class="text-sm sm:text-base">{metadata.description}</p>
 </div>
