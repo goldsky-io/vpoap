@@ -105,12 +105,18 @@
 
     return `${baseUrl}/images/twitter-card.png`
   }
+
+  function seoUrl() {
+    if (!ids && context.tokenId) return `${baseUrl}/token/${context.tokenId}`
+
+    return `${baseUrl}${route}${ids}`
+  }
 </script>
 
 <svelte:head>
   <title>{seoTitle}</title>
   <meta name="description" content={seoDescription} />
-  <meta property="og:url" content={`${baseUrl}${route}${ids}`} />
+  <meta property="og:url" content={seoUrl()} />
   <meta property="og:title" content={seoTitle} />
   <meta property="og:description" content={seoDescription} />
   <meta name="twitter:title" content={seoTitle} />
