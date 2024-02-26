@@ -64,13 +64,13 @@
       }
     }
 
-    const metdataArray = Array.isArray(metadata) ? metadata : [metadata]
+    const metadataArray = Array.isArray(metadata) ? metadata : [metadata]
 
     return {
-      ids: metdataArray.map((m) => m.id).join(','),
+      ids: metadataArray.map((m) => m.id).join(','),
       ogImage,
-      seoTitle: truncateText(composeTitle(metdataArray), 60),
-      seoDescription: truncateText(composeDescription(metdataArray), 155),
+      seoTitle: truncateText(composeTitle(metadataArray), 60),
+      seoDescription: truncateText(composeDescription(metadataArray), 155),
     }
 
     function composeTitle(metadata: POAPEventMetadata[] | undefined) {
