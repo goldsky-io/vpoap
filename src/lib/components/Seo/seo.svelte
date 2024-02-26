@@ -13,6 +13,7 @@
   export let frame: Partial<Frame> = {}
 
   $: ({ ids, ogImage, seoTitle, seoDescription } = hydrate(metadata))
+  $: seoUrl = url(ids, context)
 
   function frameHtml(frame: Partial<Frame>, ogImage: string, route: string) {
     const action = routeAction()
@@ -43,6 +44,12 @@
       if (route === '/event') return 'event POAPs'
       return 'latest'
     }
+  }
+
+  function url(ids: string, context: SeoContext) {
+    if (!ids && context.tokenId) return `${baseUrl}/token/${context.tokenId}`
+
+    return `${baseUrl}${route}${ids}`
   }
 
   function hydrate(metadata?: POAPEventMetadata | POAPEventMetadata[]) {
@@ -105,22 +112,17 @@
 
     return `${baseUrl}/images/twitter-card.png`
   }
-
-  function seoUrl() {
-    if (!ids && context.tokenId) return `${baseUrl}/token/${context.tokenId}`
-
-    return `${baseUrl}${route}${ids}`
-  }
 </script>
 
 <svelte:head>
   <title>{seoTitle}</title>
   <meta name="description" content={seoDescription} />
-  <meta property="og:url" content={seoUrl()} />
   <meta property="og:title" content={seoTitle} />
   <meta property="og:description" content={seoDescription} />
+  <meta property="og:url" content={seoUrl} />
   <meta name="twitter:title" content={seoTitle} />
   <meta name="twitter:description" content={seoDescription} />
+  <meta name="twitter:url" content={seoUrl} />
   <meta name="twitter:image" content={ogImage} />
   <!-- eslint-disable-next-line svelte/no-at-html-tags -->
   {@html frameHtml(frame, ogImage, route)}
