@@ -1,1 +1,1 @@
-export const MaxItems = 5
+export const MaxItems = 25
