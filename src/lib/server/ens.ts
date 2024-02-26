@@ -12,12 +12,17 @@ export async function fetchENS(
   address: string,
   disableDefaultAvatarUrl = false,
 ): Promise<ENSRecords> {
-  const name = await ensName(address)
-  if (!name) return {}
+  try {
+    const name = await ensName(address)
+    if (!name) return {}
 
-  const avatar = await ensAvatar(name, disableDefaultAvatarUrl)
+    const avatar = await ensAvatar(name, disableDefaultAvatarUrl)
 
-  return { name, avatar }
+    return { name, avatar }
+  } catch (err) {
+    console.error('error fetching ENS metadata', err)
+    return {}
+  }
 
   function ensName(address: string) {
     if (!isAddress(address)) return
@@ -45,5 +50,10 @@ export async function fetchENS(
 export function fetchReverseENS(address: string) {
   if (isAddress(address)) return Promise.resolve(address)
 
-  return getEnsAddress(client, { name: normalize(address) })
+  try {
+    return getEnsAddress(client, { name: normalize(address) })
+  } catch (err) {
+    console.error('error fetching reverse ENS', err)
+    return Promise.resolve(undefined)
+  }
 }
