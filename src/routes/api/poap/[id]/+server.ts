@@ -13,7 +13,13 @@ export const POST: RequestHandler = async ({ params, fetch }) => {
     const metadata = await fetchPOAPMetadata(eventId, fetch)
     if (!metadata) throw error(404, 'POAP event not found')
 
-    return json(metadata)
+    return json(metadata, {
+      headers: {
+        'Cache-Control': 'max-age=3600',
+        'CDN-Cache-Control': 'max-age=3600',
+        'Vercel-CDN-Cache-Control': 'max-age=3600',
+      },
+    })
   } catch (err) {
     console.error('error fetching POAP metadata', err)
     throw error(500, err instanceof Error ? err.message : 'POAP metadata fetch error')

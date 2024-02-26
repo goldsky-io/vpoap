@@ -9,7 +9,13 @@ export const POST: RequestHandler = async ({ params }) => {
 
     const ens = await fetchENS(address)
 
-    return json(ens)
+    return json(ens, {
+      headers: {
+        'Cache-Control': 'max-age=3600',
+        'CDN-Cache-Control': 'max-age=3600',
+        'Vercel-CDN-Cache-Control': 'max-age=3600',
+      },
+    })
   } catch (err) {
     console.error('error fetching ENS metadata', err)
     throw error(500, err instanceof Error ? err.message : 'ENS metadata fetch error')
