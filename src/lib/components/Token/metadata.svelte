@@ -8,10 +8,10 @@
   $: location = [metadata.city, metadata.country].filter(Boolean).join(', ')
 </script>
 
-<div class="flex flex-col sm:flex-row items-center justify-between">
+<div class="flex flex-col sm:flex-row items-center justify-between overflow-x-clip">
   {#if metadata.event_url}
     <a
-      class="text-indigo-700 hover:brightness-110 hover:underline transition-all truncate"
+      class="w-full text-indigo-700 hover:brightness-110 hover:underline transition-all truncate"
       href={metadata.event_url}
       target="_blank"
       rel="noopener noreferrer"
