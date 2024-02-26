@@ -8,9 +8,11 @@
   export let data: PageData
 
   const query = queryPOAPEvents(data.ids, data.max, data.initialData).poll()
+  $: context = { eventIds: data.ids }
+  $: metadata = Object.values(data.metadata)
 </script>
 
-<AppFrame route="/event" metadata={Object.values(data.metadata)} context={{ eventIds: data.ids }}>
+<AppFrame route="/event" {metadata} {context}>
   <LoadableQuery {query} let:loaded={{ events }}>
     <EventTokens {events} metadata={data.metadata} max={data.max} />
   </LoadableQuery>

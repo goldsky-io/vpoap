@@ -9,9 +9,10 @@
   export let data: PageData
 
   const query = queryPOAPAccount(data.address, data.max, data.initialData).poll()
+  $: context = { account: data.address }
 </script>
 
-<AppFrame route="/account" context={{ account: data.address }}>
+<AppFrame route="/account" {context}>
   <LoadableQuery {query} let:loaded={{ account }}>
     {#if account}
       <Tokens tokenData={account} max={data.max} />

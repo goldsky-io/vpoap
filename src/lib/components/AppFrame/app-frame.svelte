@@ -32,7 +32,7 @@
             {metadataArray[0].name}
           </a>
         {:else}
-          {#each metadataArray as m, i}
+          {#each metadataArray as m, i (m.id)}
             <a
               class="text-indigo-300 hover:brightness-110 font-semibold transition-all"
               href={`https://poap.xyz/event/${m.id}`}

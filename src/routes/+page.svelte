@@ -8,9 +8,10 @@
   export let data: PageData
 
   const query = queryPOAPTokens(data.max, data.initialData).poll()
+  $: context = { tokenId: $query.data?.tokens[0].id }
 </script>
 
-<AppFrame context={{ tokenId: $query.data?.tokens[0].id }}>
+<AppFrame {context}>
   <LoadableQuery {query} let:loaded>
     <Tokens tokenData={loaded} max={data.max} />
   </LoadableQuery>
