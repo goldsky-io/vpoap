@@ -21,29 +21,29 @@
   {:else}
     <h2 class="text-xl font-semibold truncate">{metadata.name}</h2>
   {/if}
-  <div class="flex flex-wrap justify-center lg:justify-end gap-1 min-w-36">
+  <div class="flex flex-wrap sm:flex-nowrap justify-center lg:justify-end gap-1 min-w-36">
     <a
-      class="bg-neutral-700 text-indigo-300 hover:brightness-110 rounded-sm border border-neutral-500/50 p-0.5 text-xs font-mono"
+      class="bg-neutral-700 text-indigo-300 hover:brightness-110 rounded-sm border border-neutral-500/50 p-0.5 text-xs font-mono text-nowrap"
       href="/event/{metadata.id}"
     >
       #{metadata.id}
     </a>
     <p
-      class="bg-neutral-700 text-neutral-200 rounded-sm border border-neutral-500/50 p-0.5 text-xs font-mono"
+      class="bg-neutral-700 text-neutral-200 rounded-sm border border-neutral-500/50 p-0.5 text-xs font-mono text-nowrap"
     >
       {formatISO(Number(token.created) * 1000, { representation: 'date' })}
     </p>
     {#if location}
       {#if metadata.virtual_event}
         <p
-          class="bg-neutral-700 text-neutral-200 rounded-sm border border-neutral-500/50 p-0.5 text-xs font-mono"
+          class="bg-neutral-700 text-neutral-200 rounded-sm border border-neutral-500/50 p-0.5 text-xs font-mono text-nowrap"
         >
           <span class="grayscale">🌐</span>
           <span class="-ml-1">{location}</span>
         </p>
       {:else}
         <a
-          class="bg-neutral-700 text-indigo-300 hover:brightness-110 rounded-sm border border-neutral-500/50 p-0.5 text-xs font-mono"
+          class="bg-neutral-700 text-indigo-300 hover:brightness-110 rounded-sm border border-neutral-500/50 p-0.5 text-xs font-mono text-nowrap"
           href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(location)}`}
           target="_blank"
           rel="noopener noreferrer"
