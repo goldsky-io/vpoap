@@ -16,7 +16,7 @@
       target="_blank"
       rel="noopener noreferrer"
     >
-      <h2 class="text-xl font-semibold truncate">{metadata.name}</h2>
+      <h2 class="text-xl text-center sm:text-left font-semibold truncate">{metadata.name}</h2>
     </a>
   {:else}
     <h2 class="text-xl font-semibold truncate">{metadata.name}</h2>
