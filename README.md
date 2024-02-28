@@ -1,38 +1,24 @@
-# create-svelte
+# Visual POAP
 
-Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/main/packages/create-svelte).
+This is a simple demo for visualizing POAP mints live using a [Goldsky Subgraphs](https://goldsky.com/products/subgraphs) as the data source. This demo is using the following tools:
 
-## Creating a project
+- [@download/blockies](https://github.com/download13/blockies#readme) to render the blocky avatars (when an ens avatar is not available)
+- [napi-rs/canvas](https://github.com/Brooooooklyn/canvas#readme) to render the blocky/ens avatars on a serverside canvas
+- [@resvg/resvg-js](https://github.com/yisibl/resvg-js#readme) to support transforming the satori content into PNG content
+- [@urql/svelte](https://formidable.com/open-source/urql/docs/) to fetch the data from the subgraph GraphQL query endpoint
+- [date-fns](https://github.com/date-fns/date-fns#readme) to format dates
+- [frames.js](https://github.com/framesjs/frames.js/tree/main#readme) to render farcaster frames in the head
+- [satori](https://github.com/vercel/satori#readme) to render dynamically generated opengraph images
+- [viem](https://viem.sh) to support fetching blockchain metadata (ens)
 
-If you're seeing this, you've probably already done this step. Congrats!
+## The demo
 
-```bash
-# create a new project in the current directory
-npm create svelte@latest
+This demo will live feed all POAP mints, but we can also focus on a specific event (`/event/ID`), account (`/account/ADDRESS`), or token id (`/token/ID`). Events also support multi-select (comma separated) so that you can watch the live feed of all targeted events at once (e.g., `/event/ID1,ID2,ID3`). Each POAP token card has a number of links to internal routes and various external sources.
 
-# create a new project in my-app
-npm create svelte@latest my-app
-```
+## Opengraph support
 
-## Developing
+When posting a link to social media (use the _share_ icon in the header for cache busting urls), a generated opengraph image will be used to represent the link. This image is generated using the satori tooling and will be a visual representation of the the most recently minted token on that page.
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+### Farcaster frames
 
-```bash
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
-
-## Building
-
-To create a production version of your app:
-
-```bash
-npm run build
-```
-
-You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
+When posting to farcaster, the opengraph image will be a [farcaster frame](https://docs.farcaster.xyz/reference/frames/spec). The initial image is a static image as per the spec, with actions to load dynamic content (e.g., `Refresh latest`). Each time an action is pressed a new image is generated which could represent a whole new POAP token that was minted.
