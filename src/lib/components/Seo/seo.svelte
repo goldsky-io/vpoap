@@ -48,8 +48,9 @@
 
   function url(ids: string, context: SeoContext) {
     if (!ids && context.tokenId) return `${baseUrl}/token/${context.tokenId}`
+    if (route === '/') return `${baseUrl}/${ids}`
 
-    return `${baseUrl}${route}${ids}`
+    return `${baseUrl}${route}/${ids}`
   }
 
   function hydrate(metadata?: POAPEventMetadata | POAPEventMetadata[]) {
