@@ -95,7 +95,7 @@
           style:white-space="nowrap"
         >
           {#if isStatic}
-            Visual POAP Feed
+            POAP live feed
           {:else}
             {metadata.name}
           {/if}
