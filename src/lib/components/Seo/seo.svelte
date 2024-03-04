@@ -1,10 +1,10 @@
 <script lang="ts">
   import { getFrameHtmlHead, type Frame } from 'frames.js'
+  import { BaseUrl } from '$lib/client/constants'
   import type { POAPEventMetadata } from '$lib/types/poap'
   import type { SeoContext } from './types'
 
-  const baseUrl = import.meta.env.DEV ? 'http://localhost:5173' : 'https://vpoap.vercel.app'
-  const title = 'Visual POAP'
+  const title = 'POAP live feed'
   const description = 'Watch POAP mints live!'
 
   export let route: string
@@ -30,7 +30,7 @@
 
     return getFrameHtmlHead({
       version: 'vNext',
-      postUrl: `${baseUrl}/frame?${new URLSearchParams({ action, context: JSON.stringify(state) }).toString()}`,
+      postUrl: `${BaseUrl}/frame?${new URLSearchParams({ action, context: JSON.stringify(state) }).toString()}`,
       image,
       ogImage,
       buttons,
@@ -47,10 +47,10 @@
   }
 
   function url(ids: string, context: SeoContext) {
-    if (!ids && context.tokenId) return `${baseUrl}/token/${context.tokenId}`
-    if (route === '/') return `${baseUrl}/${ids}`
+    if (!ids && context.tokenId) return `${BaseUrl}/token/${context.tokenId}`
+    if (route === '/') return `${BaseUrl}/${ids}`
 
-    return `${baseUrl}${route}/${ids}`
+    return `${BaseUrl}${route}/${ids}`
   }
 
   function hydrate(metadata?: POAPEventMetadata | POAPEventMetadata[]) {
@@ -107,11 +107,11 @@
     }
     const search = params.toString()
 
-    if (context.tokenId) return `${baseUrl}/og/token/${context.tokenId}?${search}`
-    if (context.eventIds) return `${baseUrl}/og/event/${context.eventIds.join(',')}?${search}`
-    if (context.account) return `${baseUrl}/og/account/${context.account}?${search}`
+    if (context.tokenId) return `${BaseUrl}/og/token/${context.tokenId}?${search}`
+    if (context.eventIds) return `${BaseUrl}/og/event/${context.eventIds.join(',')}?${search}`
+    if (context.account) return `${BaseUrl}/og/account/${context.account}?${search}`
 
-    return `${baseUrl}/images/twitter-card.png`
+    return `${BaseUrl}/images/twitter-card.png`
   }
 </script>
 

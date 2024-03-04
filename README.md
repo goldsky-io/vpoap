@@ -1,6 +1,6 @@
-# Visual POAP
+# POAP Feed demo
 
-This is a simple demo for visualizing POAP mints live using a [Goldsky Subgraphs](https://goldsky.com/products/subgraphs) as the data source. This demo is using the following tools:
+This is a [simple demo](https://feed.poap.demo.goldsky.com/) for visualizing a live feed of POAP mints using a [Goldsky Subgraphs](https://goldsky.com/products/subgraphs) as the data source. This demo is using the following tools:
 
 - [@download/blockies](https://github.com/download13/blockies#readme) to render the blocky avatars (when an ens avatar is not available)
 - [napi-rs/canvas](https://github.com/Brooooooklyn/canvas#readme) to render the blocky/ens avatars on a serverside canvas
@@ -22,3 +22,7 @@ When posting a link to social media (use the _share_ icon in the header for cach
 ### Farcaster frames
 
 When posting to farcaster, the opengraph image will be a [farcaster frame](https://docs.farcaster.xyz/reference/frames/spec). The initial image is a static image as per the spec, with actions to load dynamic content (e.g., `Refresh latest`). Each time an action is pressed a new image is generated which could represent a whole new POAP token that was minted.
+
+## Notes on the code
+
+Svelte was chosen as the language to write this demo in as an opportunity to test out some tooling designed for Svelte. However `frames.js` and `satori` are really designed to be used with React. As such, I would recommend that anyone curious about building a similar web app, or using these same tools should strongly consider React instead of Svelte (and consider using `@vercel/og` instead of `satori`).

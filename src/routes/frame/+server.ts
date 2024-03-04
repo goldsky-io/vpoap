@@ -1,11 +1,11 @@
 import { error } from '@sveltejs/kit'
 import { getFrameHtml, validateFrameMessage, type FrameActionPayload } from 'frames.js'
+import { BaseUrl } from '$lib/client/constants'
 import type { SeoContext } from '$lib/components/Seo'
 import { fetchLatestPOAPToken } from '$lib/server/poap'
 import type { RequestHandler } from './$types'
 
 export const POST: RequestHandler = async ({ request, url, fetch }) => {
-  const baseUrl = import.meta.env.DEV ? 'http://localhost:5173' : 'https://vpoap.vercel.app'
   const context = JSON.parse(url.searchParams.get('context') || '{}') as SeoContext
   const action = url.searchParams.get('action') || 'latest'
   const body = (await request.json()) as FrameActionPayload
@@ -24,7 +24,7 @@ export const POST: RequestHandler = async ({ request, url, fetch }) => {
         action: 'post',
       },
     ],
-    postUrl: `${baseUrl}/frame${url.search}`,
+    postUrl: `${BaseUrl}/frame${url.search}`,
   })
 
   return new Response(html, {
@@ -36,8 +36,8 @@ export const POST: RequestHandler = async ({ request, url, fetch }) => {
 
   async function imageUrl() {
     const at = new Date().getTime()
-    if (context.eventIds) return `${baseUrl}/og/event/${context.eventIds.join(',')}?at=${at}`
-    if (context.account) return `${baseUrl}/og/account/${context.account}?at=${at}`
+    if (context.eventIds) return `${BaseUrl}/og/event/${context.eventIds.join(',')}?at=${at}`
+    if (context.account) return `${BaseUrl}/og/account/${context.account}?at=${at}`
 
     const { data, error: tokenError } = await fetchLatestPOAPToken(fetch)
 
@@ -59,6 +59,6 @@ export const POST: RequestHandler = async ({ request, url, fetch }) => {
     const tokenId = data.tokens[0]?.id
     if (!tokenId) throw error(404, 'POAP token missing id')
 
-    return `${baseUrl}/og/token/${tokenId}?at=${at}`
+    return `${BaseUrl}/og/token/${tokenId}?at=${at}`
   }
 }

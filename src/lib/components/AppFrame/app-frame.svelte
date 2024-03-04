@@ -29,7 +29,7 @@
     return data
 
     function composeTitle(metadata: POAPEventMetadata[] | undefined) {
-      const title = 'Visual POAP'
+      const title = 'POAP live feed'
       if (!metadata || metadata.length === 0) return title
       if (metadata.length === 1) {
         return `${title} - #${metadata[0].id} ${metadata[0].name}`
