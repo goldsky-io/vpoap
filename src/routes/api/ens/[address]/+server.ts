@@ -1,9 +1,12 @@
 import { error, json } from '@sveltejs/kit'
 import { fetchENS } from '$lib/server/ens'
+import { MAINTENANCE_MODE } from '$lib/server/env'
 import type { RequestHandler } from './$types'
 
 export const POST: RequestHandler = async ({ params }) => {
   try {
+    if (MAINTENANCE_MODE) throw error(503, 'Service Unavailable')
+
     const { address } = params
     if (!address) throw error(422, 'Missing address')
 

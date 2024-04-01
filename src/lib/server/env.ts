@@ -4,3 +4,4 @@ import 'dotenv/config'
 
 // server side only env
 export const POAP_API_KEY = process.env.POAP_API_KEY
+export const MAINTENANCE_MODE = process.env.MAINTENANCE_MODE

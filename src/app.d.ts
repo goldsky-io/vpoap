@@ -13,6 +13,7 @@ declare global {
     interface ProcessEnv {
       // server side only environment variables
       POAP_API_KEY: string
+      MAINTENANCE_MODE: string
     }
   }
 }

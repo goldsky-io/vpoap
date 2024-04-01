@@ -1,9 +1,12 @@
 import { error, json } from '@sveltejs/kit'
+import { MAINTENANCE_MODE } from '$lib/server/env'
 import { fetchPOAPMetadata } from '$lib/server/poap'
 import type { RequestHandler } from './$types'
 
 export const POST: RequestHandler = async ({ params, fetch }) => {
   try {
+    if (MAINTENANCE_MODE) throw error(503, 'Service Unavailable')
+
     const { id } = params
     if (!id) throw error(422, 'Missing POAP event ID')
 
