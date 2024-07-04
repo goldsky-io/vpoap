@@ -2,12 +2,17 @@ import { error } from '@sveltejs/kit'
 import { MaxItems } from '$lib/client/constants'
 import { fetchPOAPEvents, fetchPOAPMetadata } from '$lib/server/poap'
 import type { PageServerLoad } from './$types'
+import { fetchENSBatch } from '$lib/server/ens'
 
 export const load: PageServerLoad = async ({ fetch, params, url }) => {
-  const ids = params.id
-    .split(',')
-    .map((id) => Number(id.trim()))
-    .filter((id) => Number.isInteger(id))
+  const ids = Array.from(
+    new Set(
+      params.id
+        .split(',')
+        .map((id) => Number(id.trim()))
+        .filter((id) => Number.isInteger(id)),
+    ),
+  )
   if (ids.length === 0) {
     console.error('Invalid POAP event IDs', params.id)
     throw error(422, 'Invalid POAP event IDs')
@@ -22,5 +27,13 @@ export const load: PageServerLoad = async ({ fetch, params, url }) => {
     fetchPOAPEvents(ids, max, fetch),
   ])
 
-  return { ids, max, metadata, initialData: query.data }
+  return {
+    ids,
+    max,
+    metadata,
+    initialData: query.data,
+    streamed: {
+      ens: fetchENSBatch(query.data?.events.flatMap((event) => event.tokens)),
+    },
+  }
 }

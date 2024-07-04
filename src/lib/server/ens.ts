@@ -2,6 +2,8 @@ import { createPublicClient, http, isAddress } from 'viem'
 import { mainnet } from 'viem/chains'
 import { getEnsAvatar, getEnsName, normalize, getEnsText, getEnsAddress } from 'viem/ens'
 import type { ENSRecords } from '$lib/types/ens'
+import type { POAPToken } from '$lib/types/poap'
+import { cacheFetch } from './cache'
 
 const client = createPublicClient({
   chain: mainnet,
@@ -13,12 +15,14 @@ export async function fetchENS(
   disableDefaultAvatarUrl = false,
 ): Promise<ENSRecords> {
   try {
-    const name = await ensName(address)
-    if (!name) return {}
+    return await cacheFetch('ens', address, async () => {
+      const name = await ensName(address)
+      if (!name) return {}
 
-    const avatar = await ensAvatar(name, disableDefaultAvatarUrl)
+      const avatar = await ensAvatar(name, disableDefaultAvatarUrl)
 
-    return { name, avatar }
+      return { name, avatar }
+    }).then((value) => value || {})
   } catch (err) {
     console.error('error fetching ENS metadata', err)
     return {}
@@ -45,6 +49,17 @@ export async function fetchENS(
     // hopefully ens metadata can supply the avatar asset
     return `https://metadata.ens.domains/mainnet/avatar/${name}`
   }
+}
+
+export async function fetchENSBatch(tokens: POAPToken[] | undefined) {
+  if (!tokens) return {}
+
+  const addresses = Array.from(new Set(tokens.map((token) => token.owner.id)))
+  const entries = await Promise.all(
+    addresses.map((address) => fetchENS(address).then((ens) => [address, ens] as const)),
+  )
+
+  return Object.fromEntries(entries)
 }
 
 export function fetchReverseENS(address: string) {

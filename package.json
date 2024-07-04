@@ -27,6 +27,7 @@
     "@resvg/resvg-js": "^2.6.0",
     "@urql/core": "^4.2.3",
     "@urql/svelte": "^4.0.4",
+    "@vercel/kv": "^2.0.0",
     "date-fns": "^3.3.1",
     "dotenv": "^16.3.2",
     "frames.js": "^0.5.1",

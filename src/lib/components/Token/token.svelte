@@ -1,12 +1,9 @@
 <script lang="ts">
   import { expoIn, expoOut } from 'svelte/easing'
   import { fly, fade } from 'svelte/transition'
-  import { browser } from '$app/environment'
   import { page } from '$app/stores'
-  import { fetchENS } from '$lib/client/ens'
-  import { fetchPOAPMetadata } from '$lib/client/poap'
   import type { ENSRecords } from '$lib/types/ens'
-  import type { POAPEvent, POAPEventMetadata, POAPToken } from '$lib/types/poap'
+  import type { POAPEventMetadata, POAPToken } from '$lib/types/poap'
   import { Loading } from '../Loading'
   import Account from './account.svelte'
   import Blocky from './blocky.svelte'
@@ -14,31 +11,10 @@
   import RelativeDate from './relative-date.svelte'
 
   export let token: POAPToken
-  export let event: POAPEvent
-  export let metadata: POAPEventMetadata | undefined = undefined
-  export let ens: ENSRecords | undefined = undefined
+  export let metadata: POAPEventMetadata | undefined
+  export let ens: ENSRecords | undefined
 
   let avatarLoaded = false
-  let loadedMetadata = metadata
-  let loadedEns = ens
-
-  $: eventId = event.id
-
-  $: if (!loadedMetadata && browser) {
-    fetchPOAPMetadata(eventId)
-      .then((data) => {
-        loadedMetadata = data
-      })
-      .catch(console.error)
-  }
-
-  $: if (!loadedEns && browser) {
-    fetchENS(token.owner.id)
-      .then((data) => {
-        loadedEns = data
-      })
-      .catch(console.error)
-  }
 </script>
 
 <div
@@ -58,13 +34,13 @@
         rel="noopener noreferrer"
       >
         <div class="grid grid-cols-1 grid-rows-1">
-          {#if loadedEns && loadedEns.name && loadedEns.avatar}
+          {#if ens && ens.name && ens.avatar}
             <img
               class="[grid-area:1/1] object-scale-down h-28 sm:h-36 aspect-square"
-              src={loadedEns.avatar}
-              alt="{loadedEns.name} avatar"
+              src={ens.avatar}
+              alt="{ens.name} avatar"
               on:error={() => {
-                console.log('Unable to load avatar', loadedEns)
+                console.log('Unable to load avatar', ens)
               }}
               on:load={() => {
                 avatarLoaded = true
@@ -84,14 +60,14 @@
     class="order-3 lg:order-2 col-span-2 lg:col-span-1 flex flex-col gap-1 p-4 pt-0 lg:pt-4 overflow-x-hidden"
     in:fade={{ delay: 200 }}
   >
-    {#if loadedMetadata}
-      <Metadata {token} metadata={loadedMetadata} />
+    {#if metadata}
+      <Metadata {token} {metadata} />
     {/if}
     <div
       class="grid grid-rows-2 sm:grid-rows-1 grid-cols-2 sm:grid-cols-[1fr,auto,1fr] items-center"
     >
       <div class="col-span-2 sm:col-span-1">
-        <Account account={token.owner} ens={loadedEns} />
+        <Account account={token.owner} {ens} />
       </div>
       <div>
         <a
@@ -118,17 +94,17 @@
     class="order-2 lg:order-3 grid place-items-center bg-[radial-gradient(circle_at_center,var(--tw-gradient-stops))] from-black to-black/40 p-1 sm:p-4 overflow-hidden"
     in:fade={{ delay: 300 }}
   >
-    {#if loadedMetadata}
+    {#if metadata}
       <div class="bg-white/80 rounded-full p-1 drop-shadow-lg">
         <a
-          href={`https://poap.gallery/event/${loadedMetadata.id}`}
+          href={`https://poap.gallery/event/${metadata.id}`}
           target="_blank"
           rel="noopener noreferrer"
         >
           <img
             class="rounded-full object-scale-down h-[7.5rem] sm:h-[9.5rem] aspect-square"
-            src={loadedMetadata.image_url}
-            alt="{loadedMetadata.name} POAP image"
+            src={metadata.image_url}
+            alt="{metadata.name} POAP image"
           />
         </a>
       </div>

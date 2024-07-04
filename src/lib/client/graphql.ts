@@ -3,7 +3,7 @@ import type { Fetch } from './types'
 
 export function createClient(fetch?: Fetch) {
   return new Client({
-    url: 'https://api.goldsky.com/api/public/project_clgolh2qx3hyt49x52bdk07j6/subgraphs/poap-xdai/1.0.0/gn',
+    url: '/api/graphql',
     exchanges: [cacheExchange, fetchExchange],
     fetch,
   })
@@ -28,6 +28,10 @@ const fragments = {
       owner {
         id
         tokensOwned
+      }
+      transfers(first: 1, where: { from_: { id: "0x0000000000000000000000000000000000000000" } }) {
+        id
+        transaction
       }
     }
   `,

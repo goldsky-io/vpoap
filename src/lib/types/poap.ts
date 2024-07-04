@@ -37,24 +37,24 @@ export interface POAPAccountWithTokens {
 
 export interface POAPEventMetadata {
   id: number
-  fancy_id: string
+  // fancy_id: string
   name: string
   description: string
-  location_type: string
+  // location_type: string
   city: string
   country: string
-  channel: string
-  platform: string
+  // channel: string
+  // platform: string
   event_url: string
   image_url: string
-  animation_url: string
-  year: number
-  start_date: string
-  end_date: string
-  expiry_date: string
-  timezone: string
-  from_admin: boolean
+  // animation_url: string
+  // year: number
+  // start_date: string
+  // end_date: string
+  // expiry_date: string
+  // timezone: string
+  // from_admin: boolean
   virtual_event: boolean
-  event_template_id: null
-  private_event: boolean
+  // event_template_id: null
+  // private_event: boolean
 }

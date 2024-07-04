@@ -1,24 +1,17 @@
 import { getContextClient } from '@urql/svelte'
+import type { ENSRecords } from '$lib/types/ens'
 import type {
   POAPAccountWithTokens,
   POAPEventMetadata,
   POAPEventWithTokens,
   POAPTokenWithEvent,
 } from '$lib/types/poap'
-import { Cache } from './cache'
 import { query } from './graphql'
-import { fetchJson } from './json'
 import { withInitialData, withPolling } from './urql'
 
-const apiBasePath = '/api/poap'
-const metadataCache = new Cache<string, POAPEventMetadata>()
-
-export async function fetchPOAPMetadata(eventId: string) {
-  return metadataCache.get(eventId, () =>
-    fetchJson<POAPEventMetadata>([apiBasePath, eventId].join('/'), {
-      method: 'POST',
-    }),
-  )
+interface WithMetadataAndENS {
+  metadata: Record<number, POAPEventMetadata>
+  ens: Record<string, ENSRecords>
 }
 
 export interface FetchPOAPEventsVariables {
@@ -26,7 +19,7 @@ export interface FetchPOAPEventsVariables {
   first?: number
 }
 
-export interface FetchPOAPEventsData {
+export interface FetchPOAPEventsData extends WithMetadataAndENS {
   events: POAPEventWithTokens[]
 }
 
@@ -52,7 +45,7 @@ export interface FetchPOAPTokensVariables {
   first?: number
 }
 
-export interface FetchPOAPTokensData {
+export interface FetchPOAPTokensData extends WithMetadataAndENS {
   tokens: POAPTokenWithEvent[]
 }
 
@@ -76,7 +69,7 @@ export interface FetchPOAPTokenVariables {
   id: number
 }
 
-export interface FetchPOAPTokenData {
+export interface FetchPOAPTokenData extends WithMetadataAndENS {
   token?: POAPTokenWithEvent | null
 }
 
@@ -101,7 +94,7 @@ export interface FetchPOAPAccountVariables {
   first?: number
 }
 
-export interface FetchPOAPAccountData {
+export interface FetchPOAPAccountData extends WithMetadataAndENS {
   account?: POAPAccountWithTokens | null
 }
 

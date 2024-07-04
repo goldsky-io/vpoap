@@ -15,12 +15,7 @@
   <div class="grid h-full">
     {#if data.token}
       <div class="grid place-content-center py-2 w-full">
-        <Token
-          token={data.token}
-          event={data.token.event}
-          metadata={data.metadata}
-          ens={data.ens}
-        />
+        <Token token={data.token} metadata={data.metadata} ens={data.ens} />
       </div>
     {:else}
       <ErrorMessage error="Token not found: #{data.id}" />

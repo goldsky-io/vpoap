@@ -11,21 +11,43 @@ import type {
   FetchPOAPTokensVariables,
 } from '$lib/client/poap'
 import type { Fetch } from '$lib/client/types'
-import type { POAPEventMetadata } from '$lib/types/poap'
+import type { POAPEventMetadata, POAPTokenWithEvent } from '$lib/types/poap'
 import { gql } from '@urql/svelte'
 import { POAP_API_KEY } from './env'
+import { cacheFetch } from './cache'
 
 // see https://documentation.poap.tech/ for api key
 const baseUrl = 'https://api.poap.tech/events/id/'
 
-export function fetchPOAPMetadata(eventId: number, fetch: Fetch) {
-  const url = new URL(String(eventId), baseUrl).href
-  return fetchJson<POAPEventMetadata>(url, {
-    fetch,
-    headers: {
-      'X-API-Key': POAP_API_KEY,
-    },
+export async function fetchPOAPMetadata(eventId: number, fetch: Fetch) {
+  return await cacheFetch('metadata', String(eventId), async () => {
+    const url = new URL(String(eventId), baseUrl).href
+    const { id, name, description, city, country, event_url, image_url, virtual_event } =
+      await fetchJson<POAPEventMetadata>(url, {
+        fetch,
+        headers: {
+          'X-API-Key': POAP_API_KEY,
+        },
+      })
+
+    return { id, name, description, city, country, event_url, image_url, virtual_event }
   })
+}
+
+export async function fetchPOAPMetadataBatch(
+  tokens: POAPTokenWithEvent[] | undefined,
+  fetch: Fetch,
+): Promise<Record<number, POAPEventMetadata>> {
+  if (!tokens) return {}
+
+  const ids = Array.from(new Set(tokens.map((token) => Number(token.event.id))))
+  const entries = await Promise.all(
+    ids.map((id) => fetchPOAPMetadata(id, fetch).then((metadata) => [id, metadata] as const)),
+  )
+
+  return Object.fromEntries(
+    entries.filter((entry): entry is [number, POAPEventMetadata] => Boolean(entry[1])),
+  )
 }
 
 export function fetchPOAPEvents(

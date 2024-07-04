@@ -13,6 +13,12 @@
 
 <AppFrame {context}>
   <LoadableQuery {query} let:loaded>
-    <Tokens tokenData={loaded} max={data.max} />
+    {#await Promise.all([data.streamed.metadata, data.streamed.ens])}
+      <Tokens tokenData={loaded} max={data.max} />
+    {:then [metadata, ens]}
+      <Tokens tokenData={loaded} max={data.max} {metadata} {ens} />
+    {:catch}
+      <Tokens tokenData={loaded} max={data.max} />
+    {/await}
   </LoadableQuery>
 </AppFrame>

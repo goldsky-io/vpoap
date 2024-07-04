@@ -13,7 +13,13 @@
 </script>
 
 <AppFrame route="/event" {metadata} {context}>
-  <LoadableQuery {query} let:loaded={{ events }}>
-    <EventTokens {events} metadata={data.metadata} max={data.max} />
+  <LoadableQuery {query} let:loaded>
+    {#await data.streamed.ens}
+      <EventTokens eventData={loaded} max={data.max} metadata={data.metadata} />
+    {:then ens}
+      <EventTokens eventData={loaded} max={data.max} metadata={data.metadata} {ens} />
+    {:catch}
+      <EventTokens eventData={loaded} max={data.max} metadata={data.metadata} />
+    {/await}
   </LoadableQuery>
 </AppFrame>

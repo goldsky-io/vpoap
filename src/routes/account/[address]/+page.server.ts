@@ -1,7 +1,7 @@
 import { error } from '@sveltejs/kit'
 import { MaxItems } from '$lib/client/constants'
-import { fetchReverseENS } from '$lib/server/ens'
-import { fetchPOAPAccount } from '$lib/server/poap'
+import { fetchENS, fetchReverseENS } from '$lib/server/ens'
+import { fetchPOAPAccount, fetchPOAPMetadataBatch } from '$lib/server/poap'
 import type { PageServerLoad } from './$types'
 
 export const load: PageServerLoad = async ({ fetch, params, url }) => {
@@ -11,6 +11,16 @@ export const load: PageServerLoad = async ({ fetch, params, url }) => {
   const max = Number(url.searchParams.get('max')) || MaxItems
 
   const query = await fetchPOAPAccount(address, max, fetch)
+  const ens = await fetchENS(address)
 
-  return { account: params.address, address, max, initialData: query.data }
+  return {
+    account: params.address,
+    ens: { [address]: ens },
+    address,
+    max,
+    initialData: query.data,
+    streamed: {
+      metadata: fetchPOAPMetadataBatch(query.data?.account?.tokens, fetch),
+    },
+  }
 }
