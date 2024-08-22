@@ -1,10 +1,10 @@
 import { error, json } from '@sveltejs/kit'
 import { MAINTENANCE_MODE } from '$lib/server/env'
-// import { fetchENS, fetchENSBatch } from '$lib/server/ens'
 import { fetchPOAPMetadata, fetchPOAPMetadataBatch } from '$lib/server/poap'
 import type { RequestHandler } from './$types'
 import type {
   POAPAccountWithTokens,
+  POAPEventMetadata,
   POAPEventWithTokens,
   POAPTokenWithEvent,
 } from '$lib/types/poap'
@@ -60,9 +60,12 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
       const ids = Array.from(new Set(result.data.events.flatMap(({ id }) => Number(id))))
       const [metadata, ens] = await Promise.all([
         Promise.all(ids.map((id) => fetchPOAPMetadata(id, fetch))).then((metadata) =>
-          Object.fromEntries(metadata.filter(Boolean).map((metadata) => [metadata.id, metadata])),
+          Object.fromEntries(
+            metadata
+              .filter((item): item is POAPEventMetadata => Boolean(item))
+              .map((metadata) => [metadata.id, metadata]),
+          ),
         ),
-        // fetchENSBatch(result.data.events.flatMap((event) => event.tokens)),
         Promise.resolve(undefined),
       ])
 
@@ -74,10 +77,8 @@ export const POST: RequestHandler = async ({ request, fetch }) => {
         },
       }
     } else if ('account' in result.data) {
-      // const address = result.data.account.id
       const [metadata, ens] = await Promise.all([
         fetchPOAPMetadataBatch(result.data.account.tokens, fetch),
-        // fetchENS(address).then((ens) => ({ [address]: ens })),
         Promise.resolve(undefined),
       ])
 

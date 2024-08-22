@@ -23,7 +23,7 @@
     "@ensdomains/ensjs": "^3.2.0",
     "@fontsource/inter": "^5.0.16",
     "@fontsource/roboto-mono": "^5.0.16",
-    "@napi-rs/canvas": "^0.1.45",
+    "@napi-rs/canvas": "^0.1.54",
     "@resvg/resvg-js": "^2.6.0",
     "@urql/core": "^4.2.3",
     "@urql/svelte": "^4.0.4",
