@@ -16,10 +16,11 @@
     "lint:style": "stylelint 'src/**/*.{css,scss,svelte}'",
     "lint:es": "pnpm sync && eslint .",
     "lint": "pnpm lint:prettier && pnpm lint:style && pnpm lint:es",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "vercel-build": "pip install setuptools && pnpm build"
   },
   "engines": {
-    "node": "18.x"
+  "node": "20.11.1"
   },
   "dependencies": {
     "@download/blockies": "^1.0.3",
