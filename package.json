@@ -18,6 +18,9 @@
     "lint": "pnpm lint:prettier && pnpm lint:style && pnpm lint:es",
     "format": "prettier --write ."
   },
+  "engines": {
+    "node": "18.x"
+  },
   "dependencies": {
     "@download/blockies": "^1.0.3",
     "@ensdomains/ensjs": "^3.2.0",
