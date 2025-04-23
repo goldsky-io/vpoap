@@ -2,6 +2,7 @@
   "name": "vpoap",
   "version": "0.0.1",
   "private": true,
+  "packageManager": "pnpm@8.15.0",
   "scripts": {
     "clean": "rimraf ./.svelte-kit",
     "dev": "vite dev",
@@ -16,7 +17,11 @@
     "lint:style": "stylelint 'src/**/*.{css,scss,svelte}'",
     "lint:es": "pnpm sync && eslint .",
     "lint": "pnpm lint:prettier && pnpm lint:style && pnpm lint:es",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "vercel-build": "pip install setuptools && pnpm build"
+  },
+  "engines": {
+  "node": "20.11.1"
   },
   "dependencies": {
     "@download/blockies": "^1.0.3",
